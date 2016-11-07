@@ -1,0 +1,67 @@
+{
+  "name": "pagenodes-nodes",
+  "version": "0.1.0",
+  "description": "node definitions for pagenodes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel ./src --out-dir ./build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/iceddev/pagenodes-nodes.git"
+  },
+  "keywords": [
+    "iot",
+    "johnny-five",
+    "robotics",
+    "midi",
+    "pagenodes"
+  ],
+  "author": "Luis Montes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iceddev/pagenodes-nodes/issues"
+  },
+  "devDependencies": {
+    "babel": "^5.8.38",
+    "babel-core": "^5.8.38",
+    "babel-eslint": "^6.1.2",
+    "babel-loader": "^5.3.2",
+    "bcryptjs": "^2.3.0",
+    "body-parser": "1.14.1",
+    "brace": "^0.8.0",
+    "browser-process-hrtime": "^0.1.2",
+    "browser-serialport": "^2.0.3",
+    "ecstatic": "^1.1.3",
+    "eslint": "^3.1.1",
+    "gifshot": "^0.3.2",
+    "is-utf8": "^0.2.0",
+    "json-loader": "^0.5.3",
+    "level-fs-browser": "^1.0.0",
+    "localforage": "^1.3.0",
+    "lodash": "^4.13.1",
+    "meshblu": "^1.33.1",
+    "meshblu-virtual-serial": "^1.1.0",
+    "mqtt": "^1.11.0",
+    "mqtt-serial": "^0.5.0",
+    "mustache": "2.2.0",
+    "nopt": "3.0.4",
+    "raw-loader": "^0.5.1",
+    "rest": "^2.0.0",
+    "semver": "5.0.3",
+    "sentiment": "0.2.3",
+    "skynet-serial": "^1.2.0",
+    "socket.io-client": "^1.3.7",
+    "socket.io-parser": "^2.2.6",
+    "splidi-serial": "^0.1.0",
+    "supertest": "1.1.0",
+    "transform-loader": "^0.2.3",
+    "uglify-js": "2.5.0",
+    "webpack": "^1.12.2",
+    "webusb-serial": "^0.3.0",
+    "when": "3.7.4",
+    "xml2js": "0.4.13"
+  },
+  "homepage": "https://github.com/iceddev/pagenodes-nodes#readme"
+}
