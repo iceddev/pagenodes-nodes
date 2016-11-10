@@ -113,38 +113,24 @@ module.exports = function(PN){
       });
 
 
+      PN.searchField({
+        name: 'serialportName',
+        rpc: 'gpio/listSerial',
+        config: true
+      })
 
-      try {
-        $("#node-config-input-serialportName").autocomplete( "destroy" );
-      } catch(err) { }
-      $("#node-config-input-serialportName-lookup").click(function() {
-        $("#node-config-input-serialportName-lookup-icon").removeClass('fa-search');
-        $("#node-config-input-serialportName-lookup-icon").addClass('spinner');
-        $("#node-config-input-serialportName-lookup").addClass('disabled');
-
-        PN.comms.rpc('gpio/listSerial', [], function(data){
-          if(data.error){
-            console.log('error searching', data.error);
-            return;
-          }
-
-          $("#node-config-input-serialportName-lookup-icon").addClass('fa-search');
-          $("#node-config-input-serialportName-lookup-icon").removeClass('spinner');
-          $("#node-config-input-serialportName-lookup").removeClass('disabled');
-          var ports = [];
-          $.each(data, function(i, port){
-            ports.push(port);
-          });
-          $("#node-config-input-serialportName").autocomplete({
-            source:ports,
-            minLength:0,
-            close: function( event, ui ) {
-              $("#node-config-input-serialportName").autocomplete( "destroy" );
-            }
-          }).autocomplete("search","");
-        });
-
+      PN.searchField({
+        name: 'inputId',
+        rpc: 'midi/listInputIDs',
+        config: true
       });
+
+      PN.searchField({
+        name: 'outputId',
+        rpc: 'midi/listOutputIDs',
+        config: true
+      });
+
 
       var usbOutput = $("#node-config-lookup-usb-output");
       //web usb handling
@@ -272,8 +258,8 @@ module.exports = function(PN){
           <TextRow name="productId" placeholder="0x8036" config={true} />
           <TextRow name="tcpHost" label="Host" config={true} />
           <TextRow name="tcpPort" label="port number" config={true} />
-          <TextRow name="inputId" config={true} />
-          <TextRow name="outputId" config={true} />
+          <SearchTextRow name="inputId" icon="tag" config={true}/>
+          <SearchTextRow name="outputId" icon="tag" config={true}/>
 
           <NameRow config={true} />
 

@@ -1,5 +1,6 @@
 module.exports = function(PN){
 
+  const {NameRow, SearchTextRow} = PN.components;
 
   PN.nodes.registerType('midi in',{
     category: 'hardware',
@@ -15,37 +16,24 @@ module.exports = function(PN){
     label: function() {
       return this.name||this.deviceId||"midi";
     },
+    oneditprepare: function(a) {
+
+      PN.searchField({
+        name: 'deviceId',
+        rpc: 'midi/listInputIDs'
+      });
+
+    },
     render: function () {
       return (
         <div>
 
-          <div>
+          <SearchTextRow name="deviceId" label="device id" icon="tag"/>
 
-            <div className="form-row">
-              <label htmlFor="node-input-deviceId">
-                <i className="fa fa-tag" /> Device ID
-              </label>
-              <input
-                type="text"
-                id="node-input-deviceId"/>
-            </div>
+          <NameRow/>
 
-
-            <div className="form-row">
-              <label htmlFor="node-input-name">
-                <i className="fa fa-tag" /> Name
-              </label>
-              <input
-                type="text"
-                id="node-input-name"
-                placeholder="Name" />
-            </div>
-
-
-            <div className="form-tips" id="node-form-row-description">
-            Device ID is optional. If not specified, the first MIDI device found will be used.
-            </div>
-
+          <div className="form-tips" id="node-form-row-description">
+          Device ID is optional. If not specified, the first MIDI device found will be used.
           </div>
 
         </div>
@@ -79,34 +67,24 @@ module.exports = function(PN){
     label: function() {
       return this.name||this.deviceId||"midi";
     },
+    oneditprepare: function(a) {
+
+      PN.searchField({
+        name: 'deviceId',
+        rpc: 'midi/listOutputIDs'
+      })
+
+    },
     render: function () {
       return (
         <div>
 
-          <div>
+          <SearchTextRow name="deviceId" label="device id" icon="tag"/>
 
-            <div className="form-row">
-              <label htmlFor="node-input-deviceId">
-                <i className="fa fa-tag" /> Device ID
-              </label>
-              <input
-                type="text"
-                id="node-input-deviceId"/>
-            </div>
+          <NameRow/>
 
-            <div className="form-row">
-              <label htmlFor="node-input-name">
-                <i className="fa fa-tag" /> Name
-              </label>
-              <input type="text"
-                id="node-input-name"
-                placeholder="Name" />
-            </div>
-
-            <div className="form-tips" id="node-form-row-description">
-            Device ID is optional. If not specified, the first MIDI device found will be used.
-            </div>
-
+          <div className="form-tips" id="node-form-row-description">
+          Device ID is optional. If not specified, the first MIDI device found will be used.
           </div>
 
         </div>

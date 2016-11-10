@@ -144,6 +144,40 @@ function init(PN) {
   midiOutNode.groupName = 'midi';
   PN.nodes.registerType("midi out",midiOutNode);
 
+
+
+  function listIDs(msg, type){
+    // request MIDI access
+    if (navigator.requestMIDIAccess) {
+        navigator.requestMIDIAccess({
+            sysex: !!msg.params[0]
+        }).then(function(midi){
+          var vals;
+          if(type === 'inputs'){
+            vals = Array.from(midi.inputs.values());
+          }else{
+            vals = Array.from(midi.outputs.values());
+          }
+          msg.reply(vals.map((val) => val.id));
+        },
+        function(err){
+          msg.reply([]);
+        });
+    } else {
+        msg.reply([]);
+    }
+  }
+
+  PN.events.on('rpc_midi/listInputIDs', function(msg){
+    console.log('rpc_midi/listInputIDs', msg);
+    listIDs(msg, 'inputs');
+  });
+
+  PN.events.on('rpc_midi/listOutputIDs', function(msg){
+    console.log('rpc_midi/listOutputIDs', msg);
+    listIDs(msg, 'outputs');
+  });
+
 }
 
 module.exports = init;
