@@ -24,7 +24,7 @@ module.exports = function(PN) {
       node.send({
         topic: 'web sensor',
         sensorType: node.sensorType,
-        payload: event.reading
+        payload: event.target.reading
       });
     };
 

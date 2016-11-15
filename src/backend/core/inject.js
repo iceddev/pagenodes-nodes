@@ -61,7 +61,14 @@ module.exports = function(PN) {
   PN.events.on("rpc_inject", function(data) {
     var node = PN.nodes.getNode(data.params[0]);
     if (node != null) {
-      node.receive();
+      if(data.params[1]){
+        node.send({
+          topic: node.topic,
+          payload: data.params[1]
+        });
+      }else{
+        node.receive();
+      }
       data.reply('ok');
     } else {
       data.reply('not ok');
