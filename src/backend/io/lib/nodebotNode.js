@@ -39,6 +39,7 @@ function createNode(PN){
         });
       }
       else if(n.connectionType === 'meshblu'){
+        try{ require('node-rsa'); }catch(exp){}
         var meshblu = require('meshblu');
         VirtualSerialPort = require('meshblu-virtual-serial').SerialPort;
 

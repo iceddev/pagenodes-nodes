@@ -4,8 +4,9 @@ try{
   //browser need to barf on this once, because.. I dont know. Kill me.
   require('node-rsa');
 }catch(exp){
-  console.log('node-rsa err', exp);
+  // console.log('node-rsa err', exp);
 }
+
 
 var when = require('when');
 
