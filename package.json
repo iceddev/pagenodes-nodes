@@ -23,7 +23,7 @@
   "bugs": {
     "url": "https://github.com/iceddev/pagenodes-nodes/issues"
   },
-  "devDependencies": {
+  "dependencies": {
     "bcryptjs": "^2.3.0",
     "body-parser": "1.14.1",
     "brace": "^0.8.0",
