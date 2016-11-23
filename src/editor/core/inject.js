@@ -63,6 +63,9 @@ module.exports = function(PN){
         return this.name?"node_label_italic":"";
     },
     oneditprepare: function() {
+
+        $("#tip-json").hide();
+
         if (this.payloadType == null) {
             if (this.payload == "") {
                 this.payloadType = "date";
@@ -184,6 +187,14 @@ module.exports = function(PN){
 
         $("#inject-time-type-select").change();
         $("#inject-time-interval-time-start").change();
+
+
+        if(PN.flowId){
+            $("#node-once").hide();
+            $("#tip-json").html(process.env.API_SERVER + '/inject/' + PN.flowId +'/' + this.id);
+            $("#tip-json").show();
+        }
+
 
     },
     oneditsave: function() {
@@ -340,7 +351,7 @@ module.exports = function(PN){
 
     <NameRow/>
 
-
+    <div className="form-tips" id="tip-json"></div>
 
 </div>
 

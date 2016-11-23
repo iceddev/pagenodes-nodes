@@ -75,7 +75,13 @@ module.exports = function(PN) {
       msg.msg = msg.msg.toString('hex');
     } else if (msg.msg && typeof msg.msg === 'object') {
       var seen = [];
-      msg.format = msg.msg.constructor.name || "Object";
+      if(msg.msg && msg.msg.constructor){
+        msg.format = msg.msg.constructor.name || "Object";
+      }
+      else{
+        msg.format = "Object";
+      }
+
       var isArray = util.isArray(msg.msg);
       if (isArray) {
         msg.format = "array ["+msg.msg.length+"]";
