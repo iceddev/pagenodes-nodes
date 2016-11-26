@@ -1,4 +1,5 @@
-var stringFunctions = require('../../shared/nodes/strings').stringFunctions;
+const stringFunctions = require('../../shared/nodes/strings').stringFunctions;
+const _ = require('lodash');
 
 module.exports = function(PN){
 
@@ -9,9 +10,13 @@ module.exports = function(PN){
           name: {value:""},   //  along with default values.
           func: {value:"camelCase", required:true},
           param2: {value:"", required: false},
+          param2Type: {value:"str", required: false},
           param3: {value:"", required: false},
+          param3Type: {value:"str", required: false},
           payloadProp: {value:"payload", required:false},
-          resultProp: {value:"payload", required:false}
+          resultProp: {value:"payload", required:false},
+          payloadPropType: {value:"msg", required:false},
+          resultPropType: {value:"msg", required:false},
         },
         inputs:1,   // set the number of inputs - only 0 or 1
         outputs:1,  // set the number of outputs - 0 to n
@@ -24,21 +29,27 @@ module.exports = function(PN){
         },
 
         oneditprepare: function() {
+
+          PN.util.setupTypedText({name: 'payloadProp', node: this, types: ['msg','str','num','bool','json']});
+          PN.util.setupTypedText({name: 'resultProp', node: this, types: ['msg']});
+          PN.util.setupTypedText({name: 'param2', node: this, types: ['str','num','bool','json','msg']});
+          PN.util.setupTypedText({name: 'param3', node: this, types: ['str','num','bool','json','msg']});
+
           var myFuncDef = stringFunctions[this.func];
 
 
           function handleFunc(functionDef) {
-            $("#node-form-row-param2").hide();
-            $("#node-form-row-param3").hide();
+            $("#node-div-param2Row").hide();
+            $("#node-div-param3Row").hide();
             functionDef.forEach(function(param) {
               console.log("param", param);
               if(param.param2) {
-                $("#node-label-param2").html(param.param2);
-                $("#node-form-row-param2").show();
+                $("#node-label-param2").html(' ' + param.param2);
+                $("#node-div-param2Row").show();
               }
               if (param.param3) {
-                $("#node-label-param3").html(param.param3);
-                $("#node-form-row-param3").show();
+                $("#node-label-param3").html(' ' + param.param3);
+                $("#node-div-param3Row").show();
               }
             });
           }
@@ -52,69 +63,22 @@ module.exports = function(PN){
           })
         },
         render: function (){
+          const {NameRow, TextRow, TypeTextRow, SelectRow} = PN.components;
+          const funcNames = _.keys(stringFunctions).sort();
           return (
             <div>
 
-              <div className="form-row">
-                <label htmlFor="node-input-payloadProp"><span>input = <code>msg.</code></span></label>
-                <input type="text" id="node-input-payloadProp" placeholder="payload"></input>
-              </div>
+              <TypeTextRow name="payloadProp" label="input" icon="arrow-down"/>
+              
+              <SelectRow name="func" icon="gears" options={funcNames} />
 
-              <div className="form-row">
-                <label htmlFor="node-input-func"><i className="fa fa-gears"></i> <span>Func</span></label>
-                <select type="text" id="node-input-func" style={{width:"74%"}}>
-                  <option value="camelCase">camelCase</option>
-                  <option value="capitalize">capitalize</option>
-                  <option value="deburr">deburr</option>
-                  <option value="endsWith">endsWith</option>
-                  <option value="escape">escape</option>
-                  <option value="escapeRegExp">escapeRegExp</option>
-                  <option value="kebabCase">kebabCase</option>
-                  <option value="lowerCase">lowerCase</option>
-                  <option value="lowerFirst">lowerFirst</option>
-                  <option value="pad">pad</option>
-                  <option value="padEnd">padEnd</option>
-                  <option value="padStart">padStart</option>
-                  <option value="parseInt">parseInt</option>
-                  <option value="repeat">repeat</option>
-                  <option value="replace">replace</option>
-                  <option value="snakeCase">snakeCase</option>
-                  <option value="split">split</option>
-                  <option value="startCase">startCase</option>
-                  <option value="startsWith">startsWith</option>
-                  <option value="toLower">toLower</option>
-                  <option value="toUpper">toUpper</option>
-                  <option value="trim">trim</option>
-                  <option value="trimEnd">trimEnd</option>
-                  <option value="trimStart">trimStart</option>
-                  <option value="unescape">unescape</option>
-                  <option value="upperCase">upperCase</option>
-                  <option value="upperFirst">upperFirst</option>
-                  <option value="words">words</option>
-                </select>
+              <TypeTextRow name="param2" icon="crosshairs"/>
 
-              </div>
+              <TypeTextRow name="param3" icon="crosshairs"/>
 
+              <TypeTextRow name="resultProp" label="output" icon="arrow-up"/>
 
-              <div className="form-row" id="node-form-row-param2">
-                <label htmlFor="node-label-param2"><i className="fa fa-crosshairs"/><span id ="node-label-param2" style={{marginLeft:"5%", textTransform: "capitalize"}}></span></label>
-                <input type="text" id="node-input-param2" style={{width:"71%"}}></input>
-              </div>
-
-              <div className="form-row" id="node-form-row-param3">
-                <label htmlFor="node-label-param3"><i className="fa fa-crosshairs"/><span id ="node-label-param3" style={{marginLeft:"5%", textTransform: "capitalize"}}></span></label>
-                <input type="text" id="node-input-param3" style={{width:"71%"}}></input>
-              </div>
-
-              <div className="form-row">
-                <label htmlFor="node-input-resultProp"> <span>result = <code>msg.</code></span></label>
-                <input type="text" id="node-input-resultProp" placeholder="payload"></input>
-              </div>
-
-              <div className="form-row">
-              <label htmlFor="node-input-name"><i className="fa fa-tag"/> <span>Name</span></label>
-                <input type="text" id="node-input-name" placeholder="name" style={{width:"71%"}}></input>
-              </div>
+              <NameRow/>
 
 
             </div>

@@ -1,5 +1,4 @@
 const isoNodes = [
-  require("./core/function"),
   require("./core/inject"),
   require("./core/remote"),
   require("./core/delay"),

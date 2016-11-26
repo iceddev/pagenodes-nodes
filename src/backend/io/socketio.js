@@ -29,7 +29,7 @@ module.exports = function(PN) {
 
       console.log('socketio handleConnection', socket);
 
-      var id = (1+Math.random()*4294967295).toString(16);
+      var id = PN.util.generateId();
       if (node.isServer) { node._clients[id] = socket; node.emit('opened',Object.keys(node._clients).length); }
       socket.on('connect',function() {
         console.log('socketio-client connect event');

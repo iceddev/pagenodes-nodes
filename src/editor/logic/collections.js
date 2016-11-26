@@ -1,4 +1,5 @@
-var collectionFunctions = require('../../shared/nodes/collections').collectionFunctions;
+const collectionFunctions = require('../../shared/nodes/collections').collectionFunctions;
+const _ = require('lodash');
 
 module.exports = function(PN){
 
@@ -12,8 +13,13 @@ module.exports = function(PN){
           param2: {value:"", required: false},
           param3: {value:"", required: false},
           param4: {value:"", requried: false},
+          param2Type: {value:"str", required: false},
+          param3Type: {value:"str", required: false},
+          param4Type: {value:"str", requried: false},
           payloadProp: {value:"payload", required:false},
-          resultProp: {value:"payload", required:false}
+          resultProp: {value:"payload", required:false},
+          payloadPropType: {value:"msg", required:false},
+          resultPropType: {value:"msg", required:false}
         },
         inputs:1,   // set the number of inputs - only 0 or 1
         outputs:1,  // set the number of outputs - 0 to n
@@ -29,60 +35,42 @@ module.exports = function(PN){
           var myFuncDef = collectionFunctions[this.func];
 
 
+          PN.util.setupTypedText({name: 'payloadProp', node: this, types: ['msg','str','num','bool','json']});
+          PN.util.setupTypedText({name: 'resultProp', node: this, types: ['msg']});
+          PN.util.setupTypedText({name: 'param2', node: this, types: ['str','num','bool','json','msg']});
+          PN.util.setupTypedText({name: 'param3', node: this, types: ['str','num','bool','json','msg']});
+          PN.util.setupTypedText({name: 'param4', node: this, types: ['str','num','bool','json','msg']});
+
           function handleFunc(functionDef) {
-            $("#node-form-row-param2Name").hide();
-            $("#node-form-row-param2Type").hide();
-            $("#node-form-row-param2Row").hide();
-            $("#node-form-row-param3Name").hide();
-            $("#node-form-row-param3Type").hide();
-            $("#node-form-row-param3Row").hide();
-            $("#node-form-row-param4Name").hide();
-            $("#node-form-row-param4Type").hide();
-            $("#node-form-row-param4Row").hide();
-            $("#node-form-row-description").hide();
+            $("#node-div-param2Row").hide();
+            $("#node-div-param3Row").hide();
+            $("#node-div-param4Row").hide();
+            $("#node-div-description").hide();
             if (functionDef.hasOwnProperty('params')) {
               if (functionDef.params.length === 0) {
-                $("#node-form-row-description").html(functionDef.description);
-                $("#node-form-row-description").show();
+                $("#node-div-description").html(functionDef.description);
+                $("#node-div-description").show();
               } else if (functionDef.params.length === 1) {
-                $("#node-form-row-param2Name").html(functionDef.params[0].name);
-                $("#node-form-row-param2Type").html(functionDef.params[0].type);
-                $("#node-form-row-description").html(functionDef.description);
-                $("#node-form-row-param2Name").show();
-                $("#node-form-row-param2Type").show();
-                $("#node-form-row-description").show();
-                $("#node-form-row-param2Row").show();
+                $("#node-label-param2").html(functionDef.params[0].name);
+                $("#node-div-description").html(functionDef.description);
+                $("#node-div-description").show();
+                $("#node-div-param2Row").show();
               } else if (functionDef.params.length === 2) {
-                $("#node-form-row-param2Name").html(functionDef.params[0].name);
-                $("#node-form-row-param2Type").html(functionDef.params[0].type);
-                $("#node-form-row-param3Name").html(functionDef.params[1].name);
-                $("#node-form-row-param3Type").html(functionDef.params[1].type);
-                $("#node-form-row-description").html(functionDef.description);
-                $("#node-form-row-param2Name").show();
-                $("#node-form-row-param2Type").show();
-                $("#node-form-row-param3Name").show();
-                $("#node-form-row-param3Type").show();
-                $("#node-form-row-description").show();
-                $("#node-form-row-param2Row").show();
-                $("#node-form-row-param3Row").show();
+                $("#node-label-param2").html(functionDef.params[0].name);
+                $("#node-label-param3").html(functionDef.params[1].name);
+                $("#node-div-description").html(functionDef.description);
+                $("#node-div-description").show();
+                $("#node-div-param2Row").show();
+                $("#node-div-param3Row").show();
               } else {
-                $("#node-form-row-param2Name").html(functionDef.params[0].name);
-                $("#node-form-row-param2Type").html(functionDef.params[0].type);
-                $("#node-form-row-param3Name").html(functionDef.params[1].name);
-                $("#node-form-row-param3Type").html(functionDef.params[1].type);
-                $("#node-form-row-param4Name").html(functionDef.params[2].name);
-                $("#node-form-row-param4Type").html(functionDef.params[2].type);
-                $("#node-form-row-description").html(functionDef.description);
-                $("#node-form-row-param2Name").show();
-                $("#node-form-row-param2Type").show();
-                $("#node-form-row-param3Name").show();
-                $("#node-form-row-param3Type").show();
-                $("#node-form-row-param4Name").show();
-                $("#node-form-row-param4Type").show();
-                $("#node-form-row-description").show();
-                $("#node-form-row-param2Row").show();
-                $("#node-form-row-param3Row").show();
-                $("#node-form-row-param4Row").show();
+                $("#node-label-param2").html(functionDef.params[0].name);
+                $("#node-label-param3").html(functionDef.params[1].name);
+                $("#node-label-param4").html(functionDef.params[2].name);
+                $("#node-div-description").html(functionDef.description);
+                $("#node-div-description").show();
+                $("#node-div-param2Row").show();
+                $("#node-div-param3Row").show();
+                $("#node-div-param4Row").show();
               }
             }
           }
@@ -99,64 +87,27 @@ module.exports = function(PN){
         // options needs replacement, but collections node code review touches up are here for the rows
 
         render: function (){
+          const {NameRow, TextRow, TypeTextRow, SelectRow} = PN.components;
+          const funcNames = _.keys(collectionFunctions).sort();
           return (
             <div>
-              <div className="form-row">
-                <label htmlFor="node-input-payloadProp"><span>input = <code>msg.</code></span></label>
-                <input type="text" id="node-input-payloadProp" placeholder="payload"></input>
-              </div>
 
-              <div className="form-row">
-                <i className="fa fa-gears"></i><label htmlFor="node-input-func" style={{marginLeft:"10px"}}>Func</label>
-                <select type="text" id="node-input-func" style={{width: "72.5%", marginLeft: "-3px"}}>
-                  <option value="countBy">countBy</option>
-                  <option value="every">every</option>
-                  <option value="filter">filter</option>
-                  <option value="find">find</option>
-                  <option value="groupBy">groupBy</option>
-                  <option value="includes">includes</option>
-                  <option value="invokeMap">invokeMap</option>
-                  <option value="keyBy">keyBy</option>
-                  <option value="map">map</option>
-                  <option value="orderBy">orderBy</option>
-                  <option value="partition">partition</option>
-                  <option value="reject">reject</option>
-                  <option value="sample">sample</option>
-                  <option value="sampleSize">sampleSize</option>
-                  <option value="shuffle">shuffle</option>
-                  <option value="size">size</option>
-                  <option value="some">some</option>
-                  <option value="sortBy">sortBy</option>
-                </select>
-              </div>
+              <TypeTextRow name="payloadProp" label="input" icon="arrow-down"/>
+              
+              <SelectRow name="func" icon="gears" options={funcNames} />
 
-              <div className="form-row" id="node-form-row-param2Row">
-                <i className="fa fa-crosshairs"></i><label htmlFor="node-input-duration" id="node-form-row-param2Name" style={{marginLeft:"10px", textTransform: "capitalize"}}></label>
-                <input type="text" id="node-input-param2"/>
-              </div>
+              <TypeTextRow name="param2" icon="crosshairs"/>
 
-              <div className="form-row" id="node-form-row-param3Row">
-                <i className="fa fa-crosshairs"></i><label htmlFor="node-input-duration" id="node-form-row-param3Name" style={{marginLeft:"10px", textTransform: "capitalize"}}></label>
-                <input type="text" id="node-input-param3"/>
-              </div>
+              <TypeTextRow name="param3" icon="crosshairs"/>
 
-              <div className="form-row" id="node-form-row-param4Row">
-                <i className="fa fa-crosshairs"></i><label htmlFor="node-input-duration" id="node-form-row-param4Name" style={{marginLeft:"10px", textTransform: "capitalize"}}></label>
-                <input type="text" id="node-input-param4"/>
-              </div>
+              <TypeTextRow name="param4" icon="crosshairs"/>
 
-              <div className="form-row">
-                <label htmlFor="node-input-resultProp"> <span>result = <code>msg.</code></span></label>
-                <input type="text" id="node-input-resultProp" placeholder="payload"></input>
-              </div>
+              <TypeTextRow name="resultProp" label="output" icon="arrow-up"/>
 
-              <div className="form-row">
-                <label htmlFor="node-input-name"><i className="fa fa-tag"/> <span style={{marginLeft: "10px"}}>Name</span></label>
-                <input type="text" id="node-input-name" placeholder="name" style={{width:"71%", marginLeft: "20px"}}></input>
-              </div>
+              <NameRow/>
 
-              <div className="form-tips" id="node-form-row-description">
-              </div>
+              <div className="form-tips" id="node-div-description"/>
+              
             </div>
           )
         },

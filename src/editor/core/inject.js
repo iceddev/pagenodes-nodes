@@ -192,7 +192,7 @@ module.exports = function(PN){
         if(PN.flowId){
             $("#node-once").hide();
             $("#tip-json").html(process.env.API_SERVER + '/inject/' + PN.flowId +'/' + this.id);
-            $("#tip-json").show();
+            $("#tip-json").show().css('font-size', '0.9em');
         }
 
 
@@ -296,15 +296,11 @@ module.exports = function(PN){
     },
     render: function () {
 
-      const {NameRow, TextRow} = PN.components;
+      const {NameRow, TextRow, TypeTextRow} = PN.components;
       return (
 <div>
 
-    <div className="form-row">
-        <label htmlFor="node-input-payload"><i className="fa fa-envelope"></i> <span data-i18n="common.label.payload"></span></label>
-        <input type="text" id="node-input-payload" style={{ width: "70%" }}/>
-        <input type="hidden" id="node-input-payloadType"/>
-    </div>
+    <TypeTextRow name="payload" icon="envelope"/>
 
     <TextRow name="topic" icon="tasks" />
 

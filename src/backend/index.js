@@ -1,6 +1,7 @@
 const isoNodes = require('./isoNodes');
 
 const browserNodes = [
+  require("./core/function"),
   require("./core/espeak"),
   require("./io/camera"),
   require("./io/gpio"),

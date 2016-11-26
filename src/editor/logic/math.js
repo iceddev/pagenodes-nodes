@@ -8,7 +8,9 @@ module.exports = function(PN){
       operator: {value:"+", required:true},
       operand: {value:"", required:false},
       payloadProp: {value:"payload", required:false},
-      resultProp: {value:"payload", required:false}
+      resultProp: {value:"payload", required:false},
+      payloadPropType: {value:"msg", required:false},
+      resultPropType: {value:"msg", required:false}
     },
     inputs:1,   // set the number of inputs - only 0 or 1
     outputs:1,  // set the number of outputs - 0 to n
@@ -16,10 +18,12 @@ module.exports = function(PN){
     label: function() {
       return this.name|| this.operator + ' ' + (this.operand || '');
     },
-    labelStyle: function() {
-      return this.name?"node_label_italic":"";
+    oneditprepare: function() {
+      PN.util.setupTypedText({name: 'payloadProp', node: this, types: ['msg']});
+      PN.util.setupTypedText({name: 'resultProp', node: this, types: ['msg']});
     },
     render: function (){
+      const {NameRow, TextRow, TypeTextRow, SelectRow} = PN.components;
       return (
         <div>
           <div className="form-row">
@@ -73,26 +77,13 @@ module.exports = function(PN){
             </select>
           </div>
 
-          <div className="form-row">
-            <label htmlFor="node-input-payloadProp"><span>x = <code>msg.</code></span></label>
-            <input type="text" id="node-input-payloadProp" placeholder="payload"></input>
-          </div>
+          <TypeTextRow name="payloadProp" label="x" icon="cogs"/>
 
-          <div className="form-row">
-            <label htmlFor="node-input-operand"> <span>y = </span></label>
-            <input type="text" id="node-input-operand" placeholder="Enter a number, 'pi', or 'e'"></input>
-          </div>
+          <TextRow name="operand" label="y" icon="cogs" placeholder="Enter a number, 'pi', or 'e'"/>
 
-          <div className="form-row">
-            <label htmlFor="node-input-resultProp"> <span>result = <code>msg.</code></span></label>
-            <input type="text" id="node-input-resultProp" placeholder="payload"></input>
-          </div>
+          <TypeTextRow name="resultProp" label="output" icon="arrow-up"/>
 
-
-          <div className="form-row">
-            <label htmlFor="node-input-name"><i className="fa fa-tag"></i> <span>Name</span></label>
-            <input type="text" id="node-input-name"></input>
-          </div>
+          <NameRow/>
 
           <div className="form-tips">
             <span>
