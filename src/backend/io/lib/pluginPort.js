@@ -13,14 +13,18 @@ module.exports = function(PN){
     self.options = options;
 
     self.dataListener = function(data){
-      // console.log('data from wire', new Buffer(data).toString('hex'));
+      // console.log('plugin data from wire', new Buffer(data).toString('hex'));
       self.emit('data', new Buffer(data));
     };
 
-    PN.events.on('data_' + self.type + '_' + self.name, self.dataListener);
+    var eventName = 'data_' + self.type + '_' + self.name;
+
+    PN.events.on(eventName, self.dataListener);
+
+    console.log('PluginSerialPort listening for events', eventName);
 
     PN.plugin.rpc('connect', [type, name, options], function(result){
-      console.log('PluginSerialPort connect result', result);
+      // console.log('PluginSerialPort connect result', result);
       if(result.error){
         return self.emit('error', result.error);
       }
@@ -50,7 +54,7 @@ module.exports = function(PN){
       data = new Buffer(data);
     }
 
-    // console.log('data to wire', data.toString('hex'));
+    // console.log('plugin data to wire', data.toString('hex'));
     PN.plugin.postMessage({type: 'data', conType: self.type, name: self.name, data});
 
   };
@@ -92,4 +96,3 @@ module.exports = function(PN){
   };
 
 };
-

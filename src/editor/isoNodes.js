@@ -5,6 +5,7 @@ const isoNodes = [
   require("./core/debug"),
   require("./core/template"),
   require("./core/notify"),
+  require("./core/function"),
   require("./analysis/sentiment"),
   require("./logic/switch"),
   require("./logic/change"),
@@ -23,7 +24,8 @@ const isoNodes = [
   require("./logic/collections"),
   require("./io/split"),
   require("./io/join"),
-  require("./parsers/XML")
+  require("./parsers/XML"),
+  require("./io/gpio"),
 ];
 
 module.exports = isoNodes;

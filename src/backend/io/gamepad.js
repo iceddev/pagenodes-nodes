@@ -4,23 +4,31 @@ module.exports = function(PN) {
     var node = this;
     var controllerId = parseInt(config.controllerId);
     var refreshInterval = parseInt(config.refreshInterval);
+    node.onlyButtonChanges = !!config.onlyButtonChanges;
+    node.roundAxes = !!config.roundAxes;
+
     console.log(navigator.getGamepads()[0]);
     if(navigator.getGamepads){
       node.interval = setInterval(function(){
         if(navigator.getGamepads && navigator.getGamepads()[controllerId]){
           var msg = {topic: 'gamepad'};
           var payload = navigator.getGamepads()[controllerId];
-          const { axes, buttons, connected, id, index, mapping, timestamp } = payload;
+          let { axes, buttons, connected, id, index, mapping, timestamp } = payload;
+          if(Array.isArray(axes) && node.roundAxes){
+            axes = axes.map(Math.round);
+          }
           msg.payload = { axes, buttons, connected, id, index, mapping, timestamp };
           msg.payload.buttons = buttons.map(
             function(button){
               return {pressed: button.pressed, value: button.value};
             }
-          )
-          node.send(msg);
+          );
+          if (!node.onlyButtonChanges || (node.onlyButtonChanges && !_.isEqual(node.lastButtons, msg.payload.buttons))) {
+            node.send(msg);
+          }
+          node.lastButtons = msg.payload.buttons;
         }
-
-      },refreshInterval);
+      }, refreshInterval);
     }else{
       node.error('navigator.getGamepads is not available in this browser');
     }
@@ -31,4 +39,3 @@ module.exports = function(PN) {
   }
   PN.nodes.registerType("gamepad",GamepadNode);
 };
-

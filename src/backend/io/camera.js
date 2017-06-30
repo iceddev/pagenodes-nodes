@@ -22,9 +22,6 @@ var startbutton = null;
 //var initialized = false;
 var mediaStream;
 
-var gifWidth = 200;
-var gifHeight = 200;
-
 function takepicture(cb) {
 
   var container = document.createElement('div');
@@ -88,8 +85,21 @@ function takepicture(cb) {
   }, false);
 }
 
-function takeGif(cb){
-  gifshot.createGIF({}, function(obj) {
+function takeGif(msg, cb){
+  var options = {};
+  if(msg.gifWidth > 0){
+    options.gifWidth = msg.gifWidth
+  }
+  if(msg.gifHeight > 0){
+    options.gifHeight = msg.gifHeight;
+  }
+  if(msg.sampleInterval > 0){
+    options.sampleInterval = msg.sampleInterval;
+  }
+  if(msg.gifHeight > 0){
+    options.gifWidth = msg.gifHeight;
+  }
+  gifshot.createGIF(options, function(obj) {
     // callback object properties
     // --------------------------
     // image - Base 64 image
@@ -113,7 +123,7 @@ module.exports = function(PN) {
     this.on("input",function(msg) {
       console.log('adding image', msg);
       if(node.animated){
-        takeGif(function(image){
+        takeGif(msg, function(image){
           msg.image = image;
           node.send(msg);
         });
@@ -129,4 +139,3 @@ module.exports = function(PN) {
 
   PN.nodes.registerType("camera",CamerNode);
 };
-

@@ -31,7 +31,7 @@ function init(PN) {
   function meshbluserverNode(n) {
     var self = this;
     PN.nodes.createNode(self,n);
-    self.server = n.server || 'meshblu.octoblu.com';
+    self.server = n.server || 'meshblu-socket-io.octoblu.com';
 
     if(!_.startsWith(self.server, 'wss://')){
       self.server = 'wss://' + self.server;
@@ -213,4 +213,3 @@ function init(PN) {
 }
 
 module.exports = init;
-

@@ -27,17 +27,19 @@ module.exports = function(PN) {
 
     var node = this;
     node.operand = n.operand;
+    node.operandType = n.operandType || 'num';
     node.operator = n.operator;
     node.resultProp = n.resultProp || DEFAULT_RESULT;
     node.payloadProp = n.payloadProp || DEFAULT_INPUT;
+    node.resultPropType = n.resultPropType || 'msg';
+    node.payloadPropType = n.payloadPropType || 'msg';
 
     this.on("input", function(msg) {
 
       // Use any user set outside-of-node prefernces
       var radix = 10;
-      var operand = node.operand;
-      var resultProp = node.resultProp;
-      var payloadProp = node.payloadProp;
+      var operand = PN.util.evaluateNodeProperty(node.operand, node.operandType, node, msg); //node.operand;
+
       if(msg.hasOwnProperty('operand')){
         operand = msg.operand;
       }
@@ -45,127 +47,141 @@ module.exports = function(PN) {
         radix = msg.radix;
       }
 
-      var msgInput = _.get(msg, payloadProp);
-      var inputVal = getNumber(msgInput, radix);
+      var rawInput = PN.util.evaluateNodeProperty(node.payloadProp, node.payloadPropType, node, msg); // _.get(msg, payloadProp);
+      var inputVal = getNumber(rawInput, radix);
       var operandVal = getNumber(operand, radix);
 
       // Preform selected operation:
       if(node.operator === "+") {
-        _.set(msg, resultProp, inputVal + operandVal);
+        node.setResult(msg, inputVal + operandVal);
       } else if (node.operator === "-") {
-        _.set(msg, resultProp, inputVal - operandVal);
+        node.setResult(msg, inputVal - operandVal);
       } else if (node.operator === "*") {
-        _.set(msg, resultProp, inputVal * operandVal);
+        node.setResult(msg, inputVal * operandVal);
       } else if (node.operator === "/") {
-        _.set(msg, resultProp, inputVal / operandVal);
+        node.setResult(msg, inputVal / operandVal);
       } else if (node.operator === "%") {
-        _.set(msg, resultProp, inputVal % operandVal);
+        node.setResult(msg, inputVal % operandVal);
       } else if (node.operator === "^") {
-        _.set(msg, resultProp, Math.pow(inputVal, operandVal));
+        node.setResult(msg, Math.pow(inputVal, operandVal));
       } else if (node.operator === "log") {
-        _.set(msg, resultProp, getBaseLog(inputVal, operandVal));
+        node.setResult(msg, getBaseLog(inputVal, operandVal));
       } else if (node.operator === "round") {
-        _.set(msg, resultProp, Math.round(inputVal));
+        node.setResult(msg, Math.round(inputVal));
       } else if (node.operator === "floor") {
-        _.set(msg, resultProp, Math.floor(inputVal));
+        node.setResult(msg, Math.floor(inputVal));
       } else if (node.operator === "ceil") {
-        _.set(msg, resultProp, Math.ceil(inputVal));
+        node.setResult(msg, Math.ceil(inputVal));
       } else if (node.operator === "sin") {
         if (inputVal === Math.PI) {
-          _.set(msg, resultProp, 0);
+          node.setResult(msg, 0);
         } else {
-          _.set(msg, resultProp, Math.sin(inputVal));
+          node.setResult(msg, Math.sin(inputVal));
         }
       } else if (node.operator === "cos") {
         if (inputVal === Math.PI) {
-          _.set(msg, resultProp, -1);
+          node.setResult(msg, -1);
         } else {
-          _.set(msg, resultProp, Math.cos(inputVal));
+          node.setResult(msg, Math.cos(inputVal));
         }
       } else if (node.operator === "tan") {
         if (inputVal === Math.PI) {
-          _.set(msg, resultProp, 0);
+          node.setResult(msg, 0);
         } else {
-          _.set(msg, resultProp, Math.tan(inputVal));
+          node.setResult(msg, Math.tan(inputVal));
         }
       } else if (node.operator === "csc") {
         if (inputVal === Math.PI) {
-          _.set(msg, resultProp, null);
+          node.setResult(msg, null);
         } else {
-          _.set(msg, resultProp, 1/(Math.sin(inputVal)));
+          node.setResult(msg, 1/(Math.sin(inputVal)));
         }
       } else if (node.operator === "sec") {
         if (inputVal === Math.PI) {
-          _.set(msg, resultProp, -1);
+          node.setResult(msg, -1);
         } else {
-          _.set(msg, resultProp, 1/(Math.cos(inputVal)));
+          node.setResult(msg, 1/(Math.cos(inputVal)));
         }
       } else if (node.operator === "cot") {
         if (inputVal === Math.PI) {
-          _.set(msg, resultProp, null);
+          node.setResult(msg, null);
         } else {
-          _.set(msg, resultProp, 1/(Math.tan(inputVal)));
+          node.setResult(msg, 1/(Math.tan(inputVal)));
         }
       } else if (node.operator === "-r") {
-        _.set(msg, resultProp, operandVal - inputVal);
+        node.setResult(msg, operandVal - inputVal);
       } else if (node.operator === "/r") {
-        _.set(msg, resultProp, operandVal / inputVal);
+        node.setResult(msg, operandVal / inputVal);
       } else if (node.operator === "%r") {
-        _.set(msg, resultProp, operandVal % inputVal);
+        node.setResult(msg, operandVal % inputVal);
       } else if (node.operator === "^r") {
-        _.set(msg, resultProp, Math.pow(operandVal, inputVal));
+        node.setResult(msg, Math.pow(operandVal, inputVal));
       } else if (node.operator === "logr") {
-        _.set(msg, resultProp, getBaseLog(operandVal, inputVal));
+        node.setResult(msg, getBaseLog(operandVal, inputVal));
       } else if (node.operator === "roundr") {
-        _.set(msg, resultProp, Math.round(operandVal));
+        node.setResult(msg, Math.round(operandVal));
       } else if (node.operator === "floorr") {
-        _.set(msg, resultProp, Math.floor(operandVal));
+        node.setResult(msg, Math.floor(operandVal));
       } else if (node.operator === "ceilr") {
-        _.set(msg, resultProp, Math.ceil(operandVal));
+        node.setResult(msg, Math.ceil(operandVal));
       } else if (node.operator === "sinr") {
         if (inputVal === Math.PI) {
-          _.set(msg, resultProp, 0);
+          node.setResult(msg, 0);
         } else {
-          _.set(msg, resultProp, Math.sin(operandVal));
+          node.setResult(msg, Math.sin(operandVal));
         }
       } else if (node.operator === "cosr") {
         if (inputVal === Math.PI) {
-          _.set(msg, resultProp, -1);
+          node.setResult(msg, -1);
         } else {
-          _.set(msg, resultProp, Math.cos(operandVal));
+          node.setResult(msg, Math.cos(operandVal));
         }
       } else if (node.operator === "tanr") {
         if (inputVal === Math.PI) {
-          _.set(msg, resultProp, 0);
+          node.setResult(msg, 0);
         } else {
-          _.set(msg, resultProp, Math.tan(operandVal));
+          node.setResult(msg, Math.tan(operandVal));
         }
       } else if (node.operator === "cscr") {
         if (inputVal === Math.PI) {
-          _.set(msg, resultProp, null);
+          node.setResult(msg, null);
         } else {
-          _.set(msg, resultProp, 1/(Math.sin(operandVal)));
+          node.setResult(msg, 1/(Math.sin(operandVal)));
         }
       } else if (node.operator === "secr") {
         if (inputVal === Math.PI) {
-          _.set(msg, resultProp, -1);
+          node.setResult(msg, -1);
         } else {
-          _.set(msg, resultProp, 1/(Math.cos(operandVal)));
+          node.setResult(msg, 1/(Math.cos(operandVal)));
         }
       } else if (node.operator === "cotr") {
         if (inputVal === Math.PI) {
-          _.set(msg, resultProp, null);
+          node.setResult(msg, null);
         } else {
-          _.set(msg, resultProp, 1/(Math.tan(operandVal)));
+          node.setResult(msg, 1/(Math.tan(operandVal)));
         }
-      } else if (node.operator === "~") {
-        _.set(msg, resultProp, ~ inputVal);
-      } else if (node.operator === "^") {
-        _.set(msg, resultProp, inputVal ^ operandVal);
-      } else if (node.operator === "<<") {
-        _.set(msg, resultProp, inputVal << operandVal);
+      } else if (node.operator === "NOT") {
+        node.setResult(msg, ~ inputVal);
+      } else if (node.operator === "OR") {
+        node.setResult(msg, inputVal | operandVal);
+      } else if (node.operator === "AND") {
+        node.setResult(msg, inputVal & operandVal);
+      } else if (node.operator === "XOR") {
+        node.setResult(msg, inputVal ^ operandVal);
+      }else if (node.operator === "<<") {
+        node.setResult(msg, inputVal << operandVal);
       } else if (node.operator === ">>") {
-        _.set(msg, resultProp, inputVal >> operandVal);
+        node.setResult(msg, inputVal >> operandVal);
+      } else if(node.operator === 'concat'){
+        //we don't otherwise have a simple concat node  ¯\_(ツ)_/¯
+
+        if(Array.isArray(rawInput)){
+          node.setResult(msg, _.concat(rawInput, operand));
+        }
+        else{
+          node.setResult(msg, rawInput + operand);
+        }
+
       }
 
       node.send(msg);
@@ -174,4 +190,3 @@ module.exports = function(PN) {
   }
   PN.nodes.registerType("math", MathNode);
 };
-

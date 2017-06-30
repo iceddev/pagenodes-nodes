@@ -1,16 +1,7 @@
-var createNodebotNode = require('./lib/nodebotNode');
-
-
-
-var five = {}; //require('johnny-five');
-
-var rest = require('rest');
-
-
-var mimeInterceptor = require('rest/interceptor/mime');
-var errorCodeInterceptor = require('rest/interceptor/errorCode');
-
-var restCall = rest.wrap(mimeInterceptor).wrap(errorCodeInterceptor);
+const rest = require('rest');
+const mimeInterceptor = require('rest/interceptor/mime');
+const errorCodeInterceptor = require('rest/interceptor/errorCode');
+const restCall = rest.wrap(mimeInterceptor).wrap(errorCodeInterceptor);
 
 function connectingStatus(n){
   n.status({fill:"yellow",shape:"ring",text:"initializing..."});
@@ -43,7 +34,7 @@ function connectedStatus(n, text){
 
 
 function setupStatus(node){
-  console.log('setupStatus', node);
+  // console.log('setupStatus', node);
   process.nextTick(function(){
     connectingStatus(node);
   });
@@ -62,8 +53,6 @@ function setupStatus(node){
 }
 
 function init(PN) {
-
-  createNodebotNode(PN);
 
   function gpioInNode(n) {
     PN.nodes.createNode(this,n);
@@ -107,7 +96,7 @@ function init(PN) {
       var node = this;
       setupStatus(node);
 
-      console.log('launching gpio out', n);
+      // console.log('launching gpio out', n);
       node.nodebot.on('boardReady', function() {
         connectedStatus(node);
         node.on('input', function(msg) {
@@ -139,7 +128,7 @@ function init(PN) {
       var node = this;
       setupStatus(node);
 
-      console.log('launching nodepixel', n);
+      // console.log('launching nodepixel', n);
       node.nodebot.on('boardReady', function() {
 
         connectedStatus(node);
@@ -156,14 +145,6 @@ function init(PN) {
         });
 
       });
-
-      // node.nodebot.on('pixelReady', function(data) {
-      //   if(data.nodeId == node.id){
-      //     connectedStatus(node);
-
-      //   }
-
-      // });
     }
     else {
       this.warn("nodebot not configured");
@@ -217,6 +198,42 @@ function init(PN) {
   PN.nodes.registerType("servo",servoNode);
 
 
+  function nodeLedNode(n) {
+    PN.nodes.createNode(this,n);
+    this.address = parseInt(n.address, 10);
+    this.mode = n.mode;
+
+    this.nodebot = PN.nodes.getNode(n.board);
+    if (typeof this.nodebot === "object") {
+      var node = this;
+      setupStatus(node);
+
+      node.nodebot.on('boardReady', function() {
+
+        connectedStatus(node);
+        var ledConfig = {
+          address: node.address,
+          mode: node.mode
+        };
+
+        node.nodebot.worker.postMessage({type: 'setupNodeLed', config: ledConfig, nodeId: node.id});
+
+        node.on('input', function(msg) {
+          node.nodebot.worker.postMessage({type: 'nodeLedMsg', nodeId: node.id, msg});
+        });
+
+      });
+
+    }
+    else {
+      this.warn("nodebot not configured");
+    }
+
+  }
+  nodeLedNode.groupName = 'gpio';
+  PN.nodes.registerType("node-led",nodeLedNode);
+
+
   function johnny5Node(n) {
     PN.nodes.createNode(this,n);
     this.nodebot = PN.nodes.getNode(n.board);
@@ -228,7 +245,7 @@ function init(PN) {
       setupStatus(node);
       node.nodebot.on('boardReady', function() {
         connectedStatus(node);
-        console.log('launching johnny5Node boardReady', n);
+        //console.log('launching johnny5Node boardReady', n);
         node.nodebot.worker.postMessage({type: 'run', data: node.func, nodeId: node.id});
       });
 
@@ -250,30 +267,6 @@ function init(PN) {
   johnny5Node.groupName = 'gpio';
   PN.nodes.registerType("johnny5",johnny5Node);
 
-  function handleRoute(req, res, handler){
-    handler(req.query)
-      .then(function(data){
-        res.send(data);
-      }, function(err){
-        console.log('error in gpio request', err);
-        res.send(500);
-      });
-  }
-
-
-  PN.events.on('rpc_gpio/listSerial', function(msg){
-    console.log('rpc_gpio/listSerial', msg);
-    PN.plugin.rpc('listSerial', [], function(result){
-      msg.reply(result);
-    });
-  });
-
-  PN.events.on('rpc_gpio/writeFirmware', function(msg){
-    PN.plugin.rpc('writeFirmware', msg.params, function(result){
-      msg.reply(result);
-    });
-  });
-
   PN.events.on('rpc_gpio/getExamples', function(msg){
     restCall({
       path: 'https://api.github.com/gists/f6f272f8998fd98e59ff131359ccf5ac'
@@ -290,4 +283,3 @@ function init(PN) {
 }
 
 module.exports = init;
-

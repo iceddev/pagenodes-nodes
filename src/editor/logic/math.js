@@ -7,6 +7,7 @@ module.exports = function(PN){
       name: {value:""},   //  along with default values.
       operator: {value:"+", required:true},
       operand: {value:"", required:false},
+      operandType: {value:"num", required:false},
       payloadProp: {value:"payload", required:false},
       resultProp: {value:"payload", required:false},
       payloadPropType: {value:"msg", required:false},
@@ -19,8 +20,9 @@ module.exports = function(PN){
       return this.name|| this.operator + ' ' + (this.operand || '');
     },
     oneditprepare: function() {
-      PN.util.setupTypedText({name: 'payloadProp', node: this, types: ['msg']});
-      PN.util.setupTypedText({name: 'resultProp', node: this, types: ['msg']});
+      PN.util.setupTypedText({name: 'payloadProp', node: this, types: ['msg','flow','num','str']});
+      PN.util.setupTypedText({name: 'resultProp', node: this, types: ['msg','flow']});
+      PN.util.setupTypedText({name: 'operand', node: this, types: ['num','msg','flow','str']});
     },
     render: function (){
       const {NameRow, TextRow, TypeTextRow, SelectRow} = PN.components;
@@ -69,17 +71,22 @@ module.exports = function(PN){
               <option value="cotr">cot(y)</option>
 
               // bitwise operators
-              <option value="~">~x</option>
-              <option value="^">x ^ y</option>
+              <option value="AND">x AND y</option>
+              <option value="OR">x OR y</option>
+              <option value="XOR">x XOR y</option>
+              <option value="NOT">NOT x</option>
               <option value="<<">x &lt;&lt; y</option>
               <option value=">>">x &gt;&gt; y</option>
+
+              //trash
+              <option value="concat">string concat</option>
 
             </select>
           </div>
 
           <TypeTextRow name="payloadProp" label="x" icon="cogs"/>
 
-          <TextRow name="operand" label="y" icon="cogs" placeholder="Enter a number, 'pi', or 'e'"/>
+          <TypeTextRow name="operand" label="y" icon="cogs" placeholder="Enter a number, 'pi', or 'e'"/>
 
           <TypeTextRow name="resultProp" label="output" icon="arrow-up"/>
 

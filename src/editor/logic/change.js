@@ -97,14 +97,14 @@ module.exports = function(PN){
 
               var propertyName = $('<input/>',{style:"width:250px",class:"node-input-rule-property-name",type:"text"})
                   .appendTo(row1)
-                  .typedInput({types:['msg']});
+                  .typedInput({types:['msg','flow']});
 
               $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
                   .text(to)
                   .appendTo(row2);
               var propertyValue = $('<input/>',{style:"width:250px",class:"node-input-rule-property-value",type:"text"})
                   .appendTo(row2)
-                  .typedInput({default:'str',types:['msg','str','num','bool','json','date']});
+                  .typedInput({default:'str',types:['msg','flow','str','num','bool','json','date']});
 
               var row3_1 = $('<div/>').appendTo(row3);
               $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
@@ -112,7 +112,7 @@ module.exports = function(PN){
                   .appendTo(row3_1);
               var fromValue = $('<input/>',{style:"width:250px",class:"node-input-rule-property-search-value",type:"text"})
                   .appendTo(row3_1)
-                  .typedInput({default:'str',types:['msg','str','re','num','bool']});
+                  .typedInput({default:'str',types:['msg','flow','str','re','num','bool']});
 
               var row3_2 = $('<div/>',{style:"margin-top:8px;"}).appendTo(row3);
               $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
@@ -120,14 +120,14 @@ module.exports = function(PN){
                   .appendTo(row3_2);
               var toValue = $('<input/>',{style:"width:250px",class:"node-input-rule-property-replace-value",type:"text"})
                   .appendTo(row3_2)
-                  .typedInput({default:'str',types:['msg','str','num','bool','json']});
+                  .typedInput({default:'str',types:['msg','flow','str','num','bool','json']});
 
               $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
                   .text(to)
                   .appendTo(row4);
               var moveValue = $('<input/>',{style:"width:250px",class:"node-input-rule-property-move-value",type:"text"})
                   .appendTo(row4)
-                  .typedInput({default:'msg',types:['msg']});
+                  .typedInput({default:'msg',types:['msg','flow']});
 
               selectField.change(function() {
                   var width = $("#node-input-rule-container").width();

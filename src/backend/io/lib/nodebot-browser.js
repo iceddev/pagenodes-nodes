@@ -3,16 +3,33 @@
 const _ = require('lodash');
 const WW_SCRIPT = '/j5-worker.bundle.js';
 const globalContext = require('../../globalContext');
+const ble = require('./blePeripheral');
 
 
 //for cleanup
-const eventTypes = ['data', 'change', 'up', 'down', 'hit', 'hold', 'press', 'release', 'start', 'stop', 'navigation', 'motionstart', 'motionend'];
+// const eventTypes = ['data', 'change', 'up', 'down', 'hit', 'hold', 'press', 'release', 'start', 'stop', 'navigation', 'motionstart', 'motionend'];
 
 
 
 function createNode(PN){
 
   var PluginSerialPort = require('./pluginPort')(PN).SerialPort;
+
+  function launchSerial(node, n){
+    node.sp.on('open', function(){
+      // console.log('serial open');
+      node.emit('networkReady', node.io);
+      node.worker.postMessage({type: 'startJ5', options: _.clone(n)});
+    });
+
+    node.sp.on('data', function(data){
+      node.worker.postMessage({type: 'serial', data});
+    });
+
+    node.sp.on('error', function(err){
+      node.emit('ioError', err);
+    });
+  }
 
 
   function connectSerial(node, n){
@@ -59,6 +76,15 @@ function createNode(PN){
         VirtualSerialPort = require('webusb-serial').SerialPort;
         node.sp = new VirtualSerialPort();
       }
+      else if(n.connectionType === 'ble-serial'){
+        console.log('connection type ble-serial');
+        VirtualSerialPort = require('ble-serial').SerialPort;
+        ble.events.once('ready', function() {
+          console.log('ble peripheral ready for ble-serial', ble);
+          node.sp = new VirtualSerialPort({peripheral: ble.peripheral});
+          launchSerial(node, n);
+        });
+      }
       else if(n.connectionType === 'tcp' || n.connectionType === 'udp'){
         //console.log('trying', n.tcpHost, n.tcpPort);
         var options = {
@@ -83,19 +109,7 @@ function createNode(PN){
     }
 
     if(node.sp){
-      node.sp.on('open', function(){
-        // console.log('serial open');
-        node.emit('networkReady', node.io);
-        node.worker.postMessage({type: 'startJ5', options: _.clone(n)});
-      });
-
-      node.sp.on('data', function(data){
-        node.worker.postMessage({type: 'serial', data});
-      });
-
-      node.sp.on('error', function(err){
-        node.emit('ioError', err);
-      });
+      launchSerial(node, n);
     }
 
   }
@@ -192,13 +206,25 @@ function createNode(PN){
       }
     });
 
-
   }
   nodebotNode.groupName = 'gpio';
   PN.nodes.registerType("nodebot", nodebotNode);
+
+
+  PN.events.on('rpc_gpio/listSerial', function(msg){
+    console.log('rpc_gpio/listSerial', msg);
+    PN.plugin.rpc('listSerial', [], function(result){
+      msg.reply(result);
+    });
+  });
+
+  PN.events.on('rpc_gpio/writeFirmware', function(msg){
+    PN.plugin.rpc('writeFirmware', msg.params, function(result){
+      msg.reply(result);
+    });
+  });
 
   return nodebotNode;
 }
 
 module.exports = createNode;
-

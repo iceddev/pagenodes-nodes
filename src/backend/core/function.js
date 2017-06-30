@@ -2,10 +2,8 @@
 const _ = require('lodash');
 const globalContext = require('../globalContext');
 
-const WW_SCRIPT = '/function-worker.bundle.js';
-
 module.exports = function(PN) {
-  "use strict";
+
 
 
   function FunctionNode(n) {
@@ -14,23 +12,22 @@ module.exports = function(PN) {
     node.name = n.name;
     node.func = n.func;
     node.context = {};
-    node.worker = new Worker(WW_SCRIPT);
+
     node.topic = n.topic;
-    node.on('close', function(){
-      console.log('terminating worker for ', node.id);
-      node.worker.terminate();
-    });
-    node.worker.onmessage = function(evt){
-      // console.log('message recieved from worker', evt);
+
+    function handleWorkerMessages(data) {
+      // console.log('fromWorker_' + node.id, data);
       try{
-        var data = evt.data;
         var type = data.type;
 
+        if(type === 'workerStarted'){
+          PN.events.emit('messageWorker', {id: node.id, config: n, type: 'initializeFunctionWorker'});
+        }
         if(type === 'result' && data.results){
           node.send(data.results);
         }
         else if(type === 'error'){
-          node.error(new Error(data.message));
+          node.error(data.error);
         }
         else if (type === 'warn'){
           node.warn(data.error);
@@ -63,14 +60,23 @@ module.exports = function(PN) {
       }catch(exp){
         node.error(exp);
       }
+    }
 
-    };
+    node.on('close', function(){
+      console.log('terminating worker for ', node.id);
+      PN.events.removeListener('fromWorker_' + node.id, handleWorkerMessages);
+      PN.events.emit('killWorker', {id: node.id});
+    });
+
+    PN.events.on('fromWorker_' + node.id, handleWorkerMessages);
+    PN.events.emit('createWorker', {id: node.id});
 
     try {
       node.on("input", function(msg) {
         try {
           var execId = '_' + Math.random() + '_' + Date.now();
-          node.worker.postMessage({msg, execId, func: node.func, type: 'run'});
+          // node.worker.postMessage({msg, execId, func: node.func, type: 'run'});
+          PN.events.emit('messageWorker', {id: node.id, type: 'run', msg: _.clone(msg)});
 
         } catch(err) {
           node.error(err);
@@ -84,4 +90,3 @@ module.exports = function(PN) {
   }
   PN.nodes.registerType("function",FunctionNode);
 };
-

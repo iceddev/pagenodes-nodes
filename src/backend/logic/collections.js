@@ -28,6 +28,7 @@ module.exports = function(PN) {
     node.resultProp = n.resultProp || DEFAULT_RESULT;
     node.payloadProp = n.payloadProp || DEFAULT_INPUT;
     node.payloadPropType = n.payloadPropType || DEFAULT_INPUT_TYPE;
+    node.resultPropType = n.resultPropType || 'msg';
 
     node.on("input", function(msg) {
       var func = node.func;
@@ -45,7 +46,7 @@ module.exports = function(PN) {
 
       var lodashFunc = _[func];
       if (lodashFunc) {
-        var msgInput = PN.util.evaluateNodeProperty(node.payloadProp, node.payloadPropType, node, msg); 
+        var msgInput = PN.util.evaluateNodeProperty(node.payloadProp, node.payloadPropType, node, msg);
         var numberOfParameters = parametersExpected(collectionFunctions, func);
 
         // Use any user set outside-of-node prefernces
@@ -55,32 +56,32 @@ module.exports = function(PN) {
           param2 = msg.param2;
         }
         else{
-          param2 = PN.util.evaluateNodeProperty(node.param2, node.param2Type, node, msg); 
+          param2 = PN.util.evaluateNodeProperty(node.param2, node.param2Type, node, msg);
         }
 
         if(msg.hasOwnProperty('param3')){
           param3 = msg.param3;
         }
         else{
-          param3 = PN.util.evaluateNodeProperty(node.param3, node.param3Type, node, msg); 
+          param3 = PN.util.evaluateNodeProperty(node.param3, node.param3Type, node, msg);
         }
 
         if(msg.hasOwnProperty('param4')){
           param4 = msg.param4;
         }
         else{
-          param4 = PN.util.evaluateNodeProperty(node.param4, node.param4Type, node, msg); 
+          param4 = PN.util.evaluateNodeProperty(node.param4, node.param4Type, node, msg);
         }
 
         console.log('msgInput', msgInput, 'param2', param2, 'param3', param3);
         if (numberOfParameters === 1) {
-          _.set(msg, resultProp, lodashFunc(msgInput));
+          node.setResult(msg, lodashFunc(msgInput));
         } else if (numberOfParameters === 2) {
-          _.set(msg, resultProp, lodashFunc(msgInput, param2));
+          node.setResult(msg, lodashFunc(msgInput, param2));
         } else if (numberOfParameters === 3 ) {
-          _.set(msg, resultProp, lodashFunc(msgInput, param2, param3));
+          node.setResult(msg, lodashFunc(msgInput, param2, param3));
         } else {
-          _.set(msg, resultProp, lodashFunc(msgInput, param2, param3, param4));
+          node.setResult(msg, lodashFunc(msgInput, param2, param3, param4));
         }
         node.send(msg);
       }
@@ -89,4 +90,3 @@ module.exports = function(PN) {
   }
   PN.nodes.registerType("collections", CollectionsNode);
 };
-

@@ -217,4 +217,3 @@ module.exports = function(PN) {
 
   PN.nodes.registerType("change", ChangeNode);
 };
-

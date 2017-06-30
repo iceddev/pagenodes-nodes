@@ -449,7 +449,7 @@ module.exports = function(PN){
   PN.nodes.registerType('meshblu-server',{
     category: 'config',
     defaults: {
-      server: {value:"meshblu.octoblu.com",required:true},
+      server: {value:"meshblu-socket-io.octoblu.com",required:true},
       port: {value:443,required:true,validate:PN.validators.number()},
       uuid: {value:"",required:true},
       token: {value:"",required:true}

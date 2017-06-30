@@ -35,11 +35,11 @@ module.exports = function(PN){
           var myFuncDef = collectionFunctions[this.func];
 
 
-          PN.util.setupTypedText({name: 'payloadProp', node: this, types: ['msg','str','num','bool','json']});
-          PN.util.setupTypedText({name: 'resultProp', node: this, types: ['msg']});
-          PN.util.setupTypedText({name: 'param2', node: this, types: ['str','num','bool','json','msg']});
-          PN.util.setupTypedText({name: 'param3', node: this, types: ['str','num','bool','json','msg']});
-          PN.util.setupTypedText({name: 'param4', node: this, types: ['str','num','bool','json','msg']});
+          PN.util.setupTypedText({name: 'payloadProp', node: this, types: ['msg','flow','str','num','bool','json']});
+          PN.util.setupTypedText({name: 'resultProp', node: this, types: ['msg','flow']});
+          PN.util.setupTypedText({name: 'param2', node: this, types: ['str','num','bool','json','msg','flow']});
+          PN.util.setupTypedText({name: 'param3', node: this, types: ['str','num','bool','json','msg','flow']});
+          PN.util.setupTypedText({name: 'param4', node: this, types: ['str','num','bool','json','msg','flow']});
 
           function handleFunc(functionDef) {
             $("#node-div-param2Row").hide();
@@ -93,7 +93,7 @@ module.exports = function(PN){
             <div>
 
               <TypeTextRow name="payloadProp" label="input" icon="arrow-down"/>
-              
+
               <SelectRow name="func" icon="gears" options={funcNames} />
 
               <TypeTextRow name="param2" icon="crosshairs"/>
@@ -107,7 +107,7 @@ module.exports = function(PN){
               <NameRow/>
 
               <div className="form-tips" id="node-div-description"/>
-              
+
             </div>
           )
         },
@@ -125,4 +125,3 @@ module.exports = function(PN){
     });
 
 };
-

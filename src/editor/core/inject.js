@@ -80,7 +80,7 @@ module.exports = function(PN){
         $("#node-input-payload").typedInput({
             default: 'str',
             typeField: $("#node-input-payloadType"),
-            types:['str','num','bool','json','date']
+            types:['str','num','bool','json','date', 'flow']
         });
 
         $("#inject-time-type-select").change(function() {
@@ -383,4 +383,3 @@ module.exports = function(PN){
     renderDescription: () => <p>Inject the action of a node</p>
   });
 };
-

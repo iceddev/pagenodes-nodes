@@ -1,10 +1,10 @@
 const isoNodes = require('./isoNodes');
 
 const browserNodes = [
-  require("./core/function"),
+  require("./core/function-browser"),
   require("./core/espeak"),
   require("./io/camera"),
-  require("./io/gpio"),
+  require('./io/lib/nodebot-browser'),
   require("./io/eventsource"),
   require("./storage/localdb"),
   require("./io/geolocate"),
@@ -16,7 +16,8 @@ const browserNodes = [
   require('./storage/file'),
   require('./io/serial'),
   require('./io/midi'),
-  require('./io/websensor')
+  require('./io/websensor'),
+  require('./io/bluetooth'),
 ];
 
 module.exports = isoNodes.concat(browserNodes);

@@ -7,6 +7,8 @@ module.exports = function(PN) {
   var rest = require("rest");
   var errorCodeInterceptor = require('rest/interceptor/errorCode');
   var mimeInterceptor = require('rest/interceptor/mime');
+  var templateInterceptor = require('rest/interceptor/template');
+
 
 
 
@@ -78,7 +80,7 @@ module.exports = function(PN) {
         });
       }
       else{
-        var restCall = rest.wrap(errorCodeInterceptor);
+        var restCall = rest.wrap(errorCodeInterceptor).wrap(templateInterceptor);
         if(typeof opts.entity === 'object'){
           restCall = restCall.wrap(mimeInterceptor, { mime: 'application/json' });
         }else{
@@ -104,4 +106,3 @@ module.exports = function(PN) {
 
   PN.nodes.registerType("http request",HTTPRequest);
 };
-

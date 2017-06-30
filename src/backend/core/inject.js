@@ -15,7 +15,6 @@ module.exports = function(PN) {
     this.interval_id = null;
     this.cronjob = null;
     this.allowDebugInput = n.allowDebugInput;
-    console.log('inject node', n, this);
 
     if (this.repeat && !isNaN(this.repeat) && this.repeat > 0) {
       this.repeat = this.repeat * 1000;
@@ -88,4 +87,3 @@ module.exports = function(PN) {
     data.reply('ok');
   });
 }
-
