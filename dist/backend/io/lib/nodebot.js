@@ -63,6 +63,7 @@ function createNode(PN) {
           node.emit('pixelReady', { nodeId: data.nodeId });
         } else if (type === 'error') {
           node.error(data.message);
+          node.emit('ioError', { nodeId: data.nodeId, message: data.message });
         } else if (type === 'warn') {
           node.warn(data.error);
         } else if (type === 'log') {

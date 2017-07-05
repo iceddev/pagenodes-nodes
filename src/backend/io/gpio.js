@@ -20,12 +20,8 @@ function networkErrorStatus(n){
 }
 
 function ioErrorStatus(n, err){
-  var errText = "error";
-  if(err && err.code){
-    errText = err.code;
-  }
+  var errText = err.message || "error";
   n.status({fill:"red",shape:"dot",text: errText});
-  n.warn(err);
 }
 
 function connectedStatus(n, text){

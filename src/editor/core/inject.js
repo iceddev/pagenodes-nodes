@@ -1,3 +1,5 @@
+const { get } = require('lodash');
+
 module.exports = function(PN){
   PN.nodes.registerType('inject',{
     category: 'input',
@@ -189,9 +191,9 @@ module.exports = function(PN){
         $("#inject-time-interval-time-start").change();
 
 
-        if(PN.flowId){
+        if(get(PN, 'config.nodes.inject.getUrl')){
             $("#node-once").hide();
-            $("#tip-json").html(process.env.API_SERVER + '/inject/' + PN.flowId +'/' + this.id);
+            $("#tip-json").html(PN.config.nodes.inject.getUrl(PN, this));
             $("#tip-json").show().css('font-size', '0.9em');
         }
 

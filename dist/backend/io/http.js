@@ -12,6 +12,7 @@ module.exports = function (PN) {
   var errorCodeInterceptor = require('rest/interceptor/errorCode');
   var mimeInterceptor = require('rest/interceptor/mime');
   var templateInterceptor = require('rest/interceptor/template');
+  var locationInterceptor = require('rest/interceptor/location');
 
   function HTTPRequest(n) {
     PN.nodes.createNode(this, n);
@@ -75,7 +76,7 @@ module.exports = function (PN) {
           }
         });
       } else {
-        var restCall = rest.wrap(errorCodeInterceptor).wrap(templateInterceptor);
+        var restCall = rest.wrap(errorCodeInterceptor).wrap(templateInterceptor).wrap(locationInterceptor);
         if (_typeof(opts.entity) === 'object') {
           restCall = restCall.wrap(mimeInterceptor, { mime: 'application/json' });
         } else {

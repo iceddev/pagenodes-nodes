@@ -68,6 +68,7 @@ function createNode(PN){
         }
         else if(type === 'error'){
           node.error(data.message);
+          node.emit('ioError', {nodeId: data.nodeId, message: data.message});
         }
         else if (type === 'warn'){
           node.warn(data.error)
