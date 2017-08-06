@@ -20,7 +20,7 @@ module.exports = function(PN){
         var node = this;
         var previousValueType = {value:"prev",label:this._("inject.previous"),hasValue:false};
 
-        $("#node-input-property").typedInput({default:this.propertyType||'msg',types:['msg']});
+        $("#node-input-property").typedInput({default:this.propertyType||'msg',types:['msg', 'flow']});
         var operators = [
             {v:"eq",t:"=="},
             {v:"neq",t:"!="},
@@ -82,10 +82,10 @@ module.exports = function(PN){
                 for (var d in operators) {
                     selectField.append($("<option></option>").val(operators[d].v).text(operators[d].t));
                 }
-                var valueField = $('<input/>',{class:"node-input-rule-value",type:"text",style:"margin-left: 5px;"}).appendTo(row).typedInput({default:'str',types:['msg','str','num',previousValueType]});
-                var btwnValueField = $('<input/>',{class:"node-input-rule-btwn-value",type:"text",style:"margin-left: 5px;"}).appendTo(row).typedInput({default:'num',types:['msg','str','num',previousValueType]});
+                var valueField = $('<input/>',{class:"node-input-rule-value",type:"text",style:"margin-left: 5px;"}).appendTo(row).typedInput({default:'str',types:['msg','str','num','flow']});
+                var btwnValueField = $('<input/>',{class:"node-input-rule-btwn-value",type:"text",style:"margin-left: 5px;"}).appendTo(row).typedInput({default:'num',types:['msg','str','num','flow']});
                 var btwnAndLabel = $('<span/>',{class:"node-input-rule-btwn-label"}).text(" "+andLabel+" ").appendTo(row3);
-                var btwnValue2Field = $('<input/>',{class:"node-input-rule-btwn-value2",type:"text",style:"margin-left:2px;"}).appendTo(row3).typedInput({default:'num',types:['msg','str','num',previousValueType]});
+                var btwnValue2Field = $('<input/>',{class:"node-input-rule-btwn-value2",type:"text",style:"margin-left:2px;"}).appendTo(row3).typedInput({default:'num',types:['msg','str','num','flow']});
                 var finalspan = $('<span/>',{style:"float: right;margin-top: 6px;"}).appendTo(row);
                 finalspan.append(' &#8594; <span class="node-input-rule-index">'+(i+1)+'</span> ');
                 var caseSensitive = $('<input/>',{id:"node-input-rule-case-"+i,class:"node-input-rule-case",type:"checkbox",style:"width:auto;vertical-align:top"}).appendTo(row2);
@@ -234,4 +234,3 @@ module.exports = function(PN){
     renderDescription: () => <p>Route messages based off properties</p>
   });
 };
-

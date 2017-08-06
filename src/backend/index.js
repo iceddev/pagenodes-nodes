@@ -14,10 +14,12 @@ const browserNodes = [
   require("./io/voicerec"),
   require('./io/accelerometer'),
   require('./storage/file'),
-  require('./io/serial'),
   require('./io/midi'),
   require('./io/websensor'),
   require('./io/bluetooth'),
+  require('./io/shape'),
+  require('./io/image'),
+  require('./io/serialconnection-browser'),
 ];
 
 module.exports = isoNodes.concat(browserNodes);

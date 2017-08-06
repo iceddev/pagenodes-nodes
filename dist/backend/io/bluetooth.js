@@ -67,11 +67,16 @@ function init(PN) {
     function handleNobleError(err) {
       node.status({ fill: "red", shape: "dot", text: err });
     }
-
     ble.events.on('noble_error', handleNobleError);
+
+    function handleNobleDisconnect() {
+      node.status({ fill: "red", shape: "dot", text: 'disconnected' });
+    }
+    ble.events.on('disconnect', handleNobleDisconnect);
 
     node.on('close', function () {
       ble.events.removeListener('noble_error', handleNobleError);
+      ble.events.removeListener('disconnect', handleNobleDisconnect);
       ble.events.removeListener('ready', getCharacteristic);
       if (node.characteristic) {
         node.characteristic.removeListener('data', handleData);
@@ -122,11 +127,16 @@ function init(PN) {
     function handleNobleError(err) {
       node.status({ fill: "red", shape: "dot", text: err });
     }
-
     ble.events.on('noble_error', handleNobleError);
+
+    function handleNobleDisconnect() {
+      node.status({ fill: "red", shape: "dot", text: 'disconnected' });
+    }
+    ble.events.on('disconnect', handleNobleDisconnect);
 
     node.on('close', function () {
       ble.events.removeListener('noble_error', handleNobleError);
+      ble.events.removeListener('disconnect', handleNobleDisconnect);
       ble.events.removeListener('ready', getCharacteristic);
       clearInterval(intervalId);
     });

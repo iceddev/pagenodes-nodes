@@ -96,6 +96,10 @@ function init(PN) {
 
           });
 
+          api.peripheral.once('disconnect', function() {
+            api.events.emit('disconnect');
+          });
+
         });
 
         noble.startScanning(services, true);

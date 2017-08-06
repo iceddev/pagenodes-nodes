@@ -25,6 +25,7 @@ const isoNodes = [
   require("./io/join"),
   require("./parsers/XML"),
   require("./io/gpio"),
+  require('./io/serial'),
 ];
 
 module.exports = isoNodes;
