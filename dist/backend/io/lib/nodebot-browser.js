@@ -5,6 +5,8 @@ var WW_SCRIPT = '/j5-worker.bundle.js';
 var globalContext = require('../../globalContext');
 var ble = require('./blePeripheral');
 
+function noop() {}
+
 //for cleanup
 // const eventTypes = ['data', 'change', 'up', 'down', 'hit', 'hold', 'press', 'release', 'start', 'stop', 'navigation', 'motionstart', 'motionend'];
 
@@ -163,17 +165,17 @@ function createNode(PN) {
       try {
         if (node.sp.sp) {
           if (node.sp.close) {
-            node.sp.close();
+            node.sp.close(noop);
           } else if (node.sp.end) {
-            node.sp.end();
+            node.sp.end(noop);
           }
         }
 
         if (node.client && node.client.stop) {
-          node.client.stop();
+          node.client.stop(noop);
         }
         if (node.client && node.client.close) {
-          node.client.close();
+          node.client.close(noop);
         }
       } catch (exp) {
         console.log('error closing', exp);

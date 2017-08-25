@@ -65,7 +65,17 @@ module.exports = function(PN){
       inputbar.id = "input-toolbar";
       content.appendChild(inputbar);
 
-      inputbar.innerHTML = '<div><a id="debug-tab-input-send" title="send" class="button" href="#" style="margin: 5px;"><i class="fa fa-play"></i></a><span id="debug-tab-input-wrapper"><input id="debug-tab-input" type="text" /></span></div>';
+      inputbar.innerHTML = `<table><tr>
+        <td>
+          <input type="checkbox" id="debug-tab-onkey-checkbox">
+        </td>
+        <td>
+          <input id="debug-tab-input" type="text" />
+        </td>
+        <td>
+          <a id="debug-tab-input-send" title="send" class="button" href="#" style="margin: 5px;"><i class="fa fa-play"></i></a>
+        </td>
+      </tr></table>`;
 
       var styleTag = document.createElement("style");
       content.appendChild(styleTag);
@@ -89,17 +99,9 @@ module.exports = function(PN){
       background: #f3f3f3;
       padding: 3px;
       }
-      #debug-tab-input-wrapper {
-      display: block;
-      overflow: hidden;
-      padding-right: 5px;
-      }
       #debug-tab-input-send {
       float: right;
       margin: 5px;
-      }
-      #debug-tab-input {
-      width: 95%;
       }
       .debug-message {
       cursor: pointer;
@@ -143,13 +145,15 @@ module.exports = function(PN){
       .debug-message-level-20 {
       border-left-color: #f99;
       border-right-color: #f99;
-      }`
+      }`;
 
       var toolbar = document.createElement("div");
       toolbar.id = "debug-toolbar";
       content.appendChild(toolbar);
 
-      toolbar.innerHTML = '<div class="pull-left"><a id="debug-tab-clear" title="clear log" class="button" href="#"><i class="fa fa-trash"></i></a></div> ';
+      toolbar.innerHTML = `<div class="pull-left">
+        <a id="debug-tab-clear" title="clear log" class="button" href="#"><i class="fa fa-trash"></i></a>
+      </div>`;
 
       var messages = document.createElement("div");
       messages.id = "debug-content";
@@ -278,16 +282,25 @@ module.exports = function(PN){
         PN.view.redraw();
       });
 
+      $('#debug-tab-onkey-checkbox').change(function() {
+        // console.log('debug-tab-onkey-checkbox', this.checked);
+        if(this.checked) {
+          return $('#debug-tab-input-send').hide();
+        }
+        $('#debug-tab-input-send').show();
+      });
+
       function sendText(){
         var textToSend = $('#debug-tab-input')[0].value;
-        $('#debug-tab-input')[0].value = ''
-        console.log($("#debug-tab-input").value);
+        $('#debug-tab-input')[0].value = '';
 
-        PN.comms.rpc('inject_text', [textToSend], function(result){
-          //PN.notify(node._("inject.success",{label:label}),"success");
-          PN.notify(PN._("text inject success", {ok:'ok'}),"success");
-        });
-
+        // console.log($("#debug-tab-input").value);
+        if(textToSend){
+          PN.comms.rpc('inject_text', [textToSend], function(result){
+            //PN.notify(node._("inject.success",{label:label}),"success");
+            PN.notify(PN._("text inject success", {ok:'ok'}),"success");
+          });
+        }
       }
       $("#debug-tab-input-send").click(sendText);
       $('#debug-tab-input').keyup(function(e){
@@ -297,7 +310,7 @@ module.exports = function(PN){
         e.preventDefault();
         e.returnValue = false;
         e.cancelBubble = true;
-        if(e.keyCode == 13){
+        if(e.keyCode == 13 || $('#debug-tab-onkey-checkbox').prop('checked')){
           sendText();
         }
         return false;
@@ -377,5 +390,3 @@ module.exports = function(PN){
     renderDescription: () => <p>Display the output of any node.</p>
   });
 };
-
-

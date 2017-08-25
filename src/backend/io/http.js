@@ -94,10 +94,10 @@ module.exports = function(PN) {
           node.status({});
           node.send(_.assign(msg, {payload: res.entity, status: res.status, headers: res.headers}));
         })
-          .catch(function(err) {
-            node.status({fill:"red",shape:"ring",text:'error'});
-            node.send(_.assign(msg, {payload: null, error: err}));
-          });
+        .catch(function(err) {
+          node.status({fill:"red",shape:"ring",text:'error'});
+          node.send(_.assign(msg, {payload: null, error: err}));
+        });
       }
 
 
