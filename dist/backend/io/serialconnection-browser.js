@@ -4,6 +4,7 @@ var UsbSerial = require('webusb-serial').SerialPort;
 var SplidiSerial = require('splidi-serial').SerialPort;
 var isUtf8 = require('is-utf8');
 var _ = require('lodash');
+function noop() {}
 
 global.Buffer = Buffer;
 
@@ -45,6 +46,7 @@ function init(PN) {
       }
 
       if (node.sp) {
+        node.emit('connInit', {});
         node.sp.on('open', function () {
           console.log('serial open', node.sp);
           node.emit('connReady', {});
@@ -69,7 +71,7 @@ function init(PN) {
 
     node.on('close', function () {
       if (node.sp && node.sp.close) {
-        node.sp.close();
+        node.sp.close(noop);
       }
     });
   }

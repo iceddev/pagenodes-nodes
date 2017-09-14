@@ -88,7 +88,7 @@ module.exports = function (PN) {
 
   PN.events.on("rpc_inject_text", function (data) {
     PN.nodes.eachNode(function (n) {
-      console.log('each node', n);
+      // console.log('each node', n);
       if (n.type === 'inject' && n.allowDebugInput) {
         n.send({
           topic: n.topic,

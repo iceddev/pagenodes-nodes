@@ -28,6 +28,7 @@ function init(PN) {
       }
 
       if(node.sp){
+        node.emit('connInit', {});
         if(node.connectionType === 'tcp') {
           node.sp.on('connect', function(){
             console.log('net serial open', node.sp);

@@ -69,18 +69,18 @@ module.exports = function (PN) {
       inputbar.id = "input-toolbar";
       content.appendChild(inputbar);
 
-      inputbar.innerHTML = '<div><a id="debug-tab-input-send" title="send" class="button" href="#" style="margin: 5px;"><i class="fa fa-play"></i></a><span id="debug-tab-input-wrapper"><input id="debug-tab-input" type="text" /></span></div>';
+      inputbar.innerHTML = '<table><tr>\n        <td>\n          <input type="checkbox" id="debug-tab-onkey-checkbox">\n        </td>\n        <td>\n          <input id="debug-tab-input" type="text" />\n        </td>\n        <td>\n          <a id="debug-tab-input-send" title="send" class="button" href="#" style="margin: 5px;"><i class="fa fa-play"></i></a>\n        </td>\n      </tr></table>';
 
       var styleTag = document.createElement("style");
       content.appendChild(styleTag);
 
-      styleTag.innerHTML = '\n      #debug-content {\n      position: absolute;\n      top: 70px;\n      bottom: 0px;\n      left:0px;\n      right: 0px;\n      overflow-y: scroll;\n      }\n      #debug-toolbar {\n      padding: 3px 10px;\n      height: 24px;\n      background: #f3f3f3;\n      }\n      #input-toolbar {\n      height: 34px;\n      background: #f3f3f3;\n      padding: 3px;\n      }\n      #debug-tab-input-wrapper {\n      display: block;\n      overflow: hidden;\n      padding-right: 5px;\n      }\n      #debug-tab-input-send {\n      float: right;\n      margin: 5px;\n      }\n      #debug-tab-input {\n      width: 95%;\n      }\n      .debug-message {\n      cursor: pointer;\n      border-bottom: 1px solid #eee;\n      border-left: 8px solid #eee;\n      border-right: 8px solid #eee;\n      padding: 2px;\n      }\n      .debug-message-date {\n      background: #fff;\n      font-size: 9px;\n      color: #aaa;\n      padding: 1px 5px 1px 1px;\n      }\n      .debug-message-topic {\n      display: block;\n      background: #fff;\n      padding: 1px;\n      font-size: 10px;\n      color: #a66;\n      }\n      .debug-message-name {\n      background: #fff;\n      padding: 1px 5px;\n      font-size: 9px;\n      color: #aac;\n      }\n      .debug-message-payload {\n      display: block;\n      padding: 2px;\n      background: #fff;\n      }\n      .debug-message-level-log {\n      border-left-color: #eee;\n      border-right-color: #eee;\n      }\n      .debug-message-level-30 {\n      border-left-color: #ffdf9d;\n      border-right-color: #ffdf9d;\n      }\n      .debug-message-level-20 {\n      border-left-color: #f99;\n      border-right-color: #f99;\n      }';
+      styleTag.innerHTML = '\n      #debug-content {\n      position: absolute;\n      top: 70px;\n      bottom: 0px;\n      left:0px;\n      right: 0px;\n      overflow-y: scroll;\n      }\n      #debug-toolbar {\n      padding: 3px 10px;\n      height: 24px;\n      background: #f3f3f3;\n      }\n      #input-toolbar {\n      height: 34px;\n      background: #f3f3f3;\n      padding: 3px;\n      }\n      #debug-tab-input-send {\n      float: right;\n      margin: 5px;\n      }\n      .debug-message {\n      cursor: pointer;\n      border-bottom: 1px solid #eee;\n      border-left: 8px solid #eee;\n      border-right: 8px solid #eee;\n      padding: 2px;\n      }\n      .debug-message-date {\n      background: #fff;\n      font-size: 9px;\n      color: #aaa;\n      padding: 1px 5px 1px 1px;\n      }\n      .debug-message-topic {\n      display: block;\n      background: #fff;\n      padding: 1px;\n      font-size: 10px;\n      color: #a66;\n      }\n      .debug-message-name {\n      background: #fff;\n      padding: 1px 5px;\n      font-size: 9px;\n      color: #aac;\n      }\n      .debug-message-payload {\n      display: block;\n      padding: 2px;\n      background: #fff;\n      }\n      .debug-message-level-log {\n      border-left-color: #eee;\n      border-right-color: #eee;\n      }\n      .debug-message-level-30 {\n      border-left-color: #ffdf9d;\n      border-right-color: #ffdf9d;\n      }\n      .debug-message-level-20 {\n      border-left-color: #f99;\n      border-right-color: #f99;\n      }';
 
       var toolbar = document.createElement("div");
       toolbar.id = "debug-toolbar";
       content.appendChild(toolbar);
 
-      toolbar.innerHTML = '<div class="pull-left"><a id="debug-tab-clear" title="clear log" class="button" href="#"><i class="fa fa-trash"></i></a></div> ';
+      toolbar.innerHTML = '<div class="pull-left">\n        <a id="debug-tab-clear" title="clear log" class="button" href="#"><i class="fa fa-trash"></i></a>\n      </div>';
 
       var messages = document.createElement("div");
       messages.id = "debug-content";
@@ -201,15 +201,25 @@ module.exports = function (PN) {
         PN.view.redraw();
       });
 
+      $('#debug-tab-onkey-checkbox').change(function () {
+        // console.log('debug-tab-onkey-checkbox', this.checked);
+        if (this.checked) {
+          return $('#debug-tab-input-send').hide();
+        }
+        $('#debug-tab-input-send').show();
+      });
+
       function sendText() {
         var textToSend = $('#debug-tab-input')[0].value;
         $('#debug-tab-input')[0].value = '';
-        console.log($("#debug-tab-input").value);
 
-        PN.comms.rpc('inject_text', [textToSend], function (result) {
-          //PN.notify(node._("inject.success",{label:label}),"success");
-          PN.notify(PN._("text inject success", { ok: 'ok' }), "success");
-        });
+        // console.log($("#debug-tab-input").value);
+        if (textToSend) {
+          PN.comms.rpc('inject_text', [textToSend], function (result) {
+            //PN.notify(node._("inject.success",{label:label}),"success");
+            PN.notify(PN._("text inject success", { ok: 'ok' }), "success");
+          });
+        }
       }
       $("#debug-tab-input-send").click(sendText);
       $('#debug-tab-input').keyup(function (e) {
@@ -219,7 +229,7 @@ module.exports = function (PN) {
         e.preventDefault();
         e.returnValue = false;
         e.cancelBubble = true;
-        if (e.keyCode == 13) {
+        if (e.keyCode == 13 || $('#debug-tab-onkey-checkbox').prop('checked')) {
           sendText();
         }
         return false;
