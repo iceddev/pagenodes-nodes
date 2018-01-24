@@ -62,7 +62,7 @@ module.exports = function(PN){
 
 
   PluginSerialPort.prototype.close = function (callback) {
-    console.log('closing');
+    console.log('closing PluginSerialPort', callback);
     var self = this;
     PN.plugin.rpc('disconnect', [self.type, self.name], function(result){
       if(result.error){

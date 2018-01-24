@@ -4,6 +4,7 @@ module.exports = function (PN) {
   "use strict";
 
   function InjectNode(n) {
+    var _this = this;
 
     PN.nodes.createNode(this, n);
     this.topic = n.topic;
@@ -38,16 +39,16 @@ module.exports = function (PN) {
       }, 100);
     }
 
-    this.on("input", function (msg) {
-      var msg = { topic: this.topic };
-      if (!this.payloadType && !this.payload || this.payloadType === "date") {
+    this.on('emitMsg', function () {
+      var msg = { topic: _this.topic };
+      if (!_this.payloadType && !_this.payload || _this.payloadType === "date") {
         msg.payload = Date.now();
-      } else if (!this.payloadType) {
-        msg.payload = this.payload;
+      } else if (!_this.payloadType) {
+        msg.payload = _this.payload;
       } else {
-        msg.payload = PN.util.evaluateNodeProperty(this.payload, this.payloadType, this, msg);
+        msg.payload = PN.util.evaluateNodeProperty(_this.payload, _this.payloadType, _this, msg);
       }
-      this.send(msg);
+      _this.send(msg);
       msg = null;
     });
   }
@@ -78,7 +79,7 @@ module.exports = function (PN) {
           payload: data.params[1]
         });
       } else {
-        node.receive();
+        node.emit('emitMsg');
       }
       data.reply('ok');
     } else {

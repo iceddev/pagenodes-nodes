@@ -191,9 +191,9 @@ module.exports = function(PN){
         $("#inject-time-interval-time-start").change();
 
 
-        if(get(PN, 'config.nodes.inject.getUrl')){
+        if(get(PN, 'settings.nodes.inject.hookbase')){
             $("#node-once").hide();
-            $("#tip-json").html(PN.config.nodes.inject.getUrl(PN, this));
+            $("#tip-json").html(PN.settings.nodes.inject.hookbase + this.id);
             $("#tip-json").show().css('font-size', '0.9em');
         }
 

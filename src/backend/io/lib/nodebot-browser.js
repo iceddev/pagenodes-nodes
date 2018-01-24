@@ -25,6 +25,7 @@ function createNode(PN){
 
     node.sp.on('data', function(data){
       node.worker.postMessage({type: 'serial', data});
+      console.log('posted data from physical sp to worker', data);
     });
 
     node.sp.on('error', function(err){
@@ -35,7 +36,7 @@ function createNode(PN){
 
   function connectSerial(node, n){
 
-    if(n.boardType === 'firmata'){
+    if(n.boardType === 'firmata' || n.boardType === 'playground-io'){
       var VirtualSerialPort, client;
       if(n.connectionType === 'local'){
         node.sp = new PluginSerialPort('serial', n.serialportName, {portName: n.serialportName});
@@ -134,7 +135,7 @@ function createNode(PN){
         }
         else if(type === 'workerReady'){
           node.emit('workerReady', node);
-          if(node.boardType === 'firmata'){
+          if(node.boardType === 'firmata' || node.boardType === 'playground-io'){
             connectSerial(node, n);
           }
           else{
@@ -187,7 +188,7 @@ function createNode(PN){
       node.worker.terminate();
 
       try{
-        if(node.sp.sp){
+        if(node.sp){
           if(node.sp.close){
             node.sp.close(noop);
           }else if(node.sp.end){

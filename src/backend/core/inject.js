@@ -30,7 +30,7 @@ module.exports = function(PN) {
       setTimeout( function(){ node.emit("input",{}); }, 100);
     }
 
-    this.on("input",function(msg) {
+    this.on('emitMsg', () => {
       var msg = {topic:this.topic};
       if ( (!this.payloadType && !this.payload) || this.payloadType === "date") {
         msg.payload = Date.now();
@@ -66,7 +66,7 @@ module.exports = function(PN) {
           payload: data.params[1]
         });
       }else{
-        node.receive();
+        node.emit('emitMsg');
       }
       data.reply('ok');
     } else {

@@ -76,6 +76,7 @@ module.exports = function (PN) {
       var boardRows = ['firmata', 'bean', 'spark', 'imp'];
       var boardToggles = {
         firmata: 'firmata',
+        "playground-io": 'playground-io',
         "bean-io": 'bean',
         "spark-io": 'spark',
         "tinker-io": 'spark',
@@ -83,6 +84,12 @@ module.exports = function (PN) {
       };
 
       function toggleBoardRows(type) {
+
+        //playground will use same options as firamta, but different IO class backend
+        if (type === 'playground-io') {
+          type = 'firmata';
+        }
+
         var boardType = boardToggles[type] || 'other';
         boardRows.forEach(function (row) {
           $("#node-div-" + row + "Row").hide();
@@ -106,6 +113,7 @@ module.exports = function (PN) {
       };
 
       function toggleFirmataOptions(type) {
+        // console.log('toggleFirmataOptions', type);
         var firmOpts = firmataToggles[type] || [];
         firmataRows.forEach(function (row) {
           $("#node-div-" + row + "Row").hide();
@@ -244,7 +252,7 @@ module.exports = function (PN) {
         "div",
         null,
         React.createElement(SelectRow, { name: "boardType", label: "Nodebot", icon: "gears", config: true,
-          options: [['Arduino/Firmata', 'firmata'], ['Particle/Tinker', 'tinker-io']] }),
+          options: [['Arduino/Firmata', 'firmata'], ['Circuit Playground', 'playground-io'], ['Particle/Tinker', 'tinker-io']] }),
         React.createElement(
           "div",
           { className: "form-row", id: "node-div-firmataRow" },
