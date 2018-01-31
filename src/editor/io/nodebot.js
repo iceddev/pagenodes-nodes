@@ -38,7 +38,6 @@ module.exports = function(PN){
       sparkToken: {value:"", required:false},
       beanId: {value:"", required:false},
       impId: {value:"", required:false},
-      meshbluServer: {value: "https://meshblu.octoblu.com", required:false},
       uuid: {value: "", required:false},
       token: {value: "", required:false},
       sendUuid: {value: "", required:false},
@@ -71,13 +70,12 @@ module.exports = function(PN){
         });
       }
 
-      var firmataRows = ['serial', 'mqttServer', 'socketServer', 'username', 'password', 'pubTopic', 'subTopic', 'tcpHost', 'tcpPort', 'meshbluServer', 'uuid', 'token', 'sendUuid', 'usb', 'firmware', 'generateId'];
+      var firmataRows = ['serial', 'mqttServer', 'socketServer', 'username', 'password', 'pubTopic', 'subTopic', 'tcpHost', 'tcpPort', 'uuid', 'token', 'sendUuid', 'usb', 'firmware', 'generateId'];
       var firmataToggles = {
         local: ['serial', 'firmware'],
         "webusb-serial": ['usb'],
         "ble-serial": [],
         mqtt: ['mqttServer', 'username', 'password', 'pubTopic', 'subTopic'],
-        meshblu: ['meshbluServer', 'uuid', 'token', 'sendUuid', 'generateId'],
         socketio: ['socketServer', 'pubTopic', 'subTopic'],
         tcp: ['tcpHost', 'tcpPort'],
         splidi: [],
@@ -189,35 +187,6 @@ module.exports = function(PN){
       }
 
 
-
-      var generateButton = $('#node-config-input-generateId');
-
-      generateButton.click(function() {
-        var messageArea = $('#node-config-input-messageArea');
-        messageArea.html('generating...');
-        PN.comms.rpc('meshblu/register', [{
-          server: $('#node-config-input-server').val(),
-          port: $('#node-config-input-port').val()
-        }], function(data){
-          console.log('data', data);
-          if(data.error){
-            if(typeof err === 'object'){
-              try{
-                err = JSON.stringify(err);
-              }catch(ex){}
-            }
-            messageArea.html('error: ' + err);
-            return;
-          }
-          if(data && data.uuid && data.token){
-            $('#node-config-input-uuid').val(data.uuid);
-            $('#node-config-input-token').val(data.token);
-          }
-          messageArea.html('ok');
-        });
-
-      });
-
       console.log('prepped', self);
 
     },
@@ -249,7 +218,6 @@ module.exports = function(PN){
 
               <SelectRow name="connectionType" label="connection type" icon="wrench" config={true}
                 options={ [['MQTT', 'mqtt'],
-                           ['Meshblu (skynet)', 'meshblu'],
                            ['Bluetooth Serial', 'ble-serial'],
                            ['Serial Port', 'local'],
                            ['TCP', 'tcp']] }/>
@@ -279,8 +247,6 @@ module.exports = function(PN){
               <TextRow name="mqttServer" label="mqtt server" icon="globe" placeholder="mqtt://my_mqtt_server:1883" config={true} />
 
               <TextRow name="socketServer" label="websocket server" icon="globe" placeholder="wss://my_socket_server" config={true} />
-
-              <TextRow name="meshbluServer" label="meshblu server" icon="globe" placeholder="https://meshblu.octoblu.com" config={true} />
 
               <TextRow name="uuid" icon="tag" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" config={true} />
 
