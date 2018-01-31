@@ -34,7 +34,12 @@ function init(PN) {
     console.log('on prepublish', config);
     var nodeList = config.params[0] || [];
     var services = [];
+    var deviceNames = [];
+    var searchName = void 0;
     nodeList.forEach(function (nodeConfig) {
+      if (nodeConfig.deviceName) {
+        deviceNames.push(nodeConfig.deviceName);
+      }
       if (nodeConfig.bleServiceId) {
         services.push(nodeConfig.bleServiceId);
       } else if (nodeConfig.connectionType === 'ble-serial') {
@@ -43,6 +48,11 @@ function init(PN) {
       }
     });
     services = _.uniq(services);
+    deviceNames = _.uniq(deviceNames);
+    if (deviceNames.length) {
+      //just grab the first one?
+      searchName = deviceNames[0];
+    }
     try {
 
       if (api.peripheral) {
@@ -98,7 +108,13 @@ function init(PN) {
           });
         });
 
+        if (searchName) {
+          services = { services: services, name: searchName };
+        }
+
+        console.log('startScanning', services);
         noble.startScanning(services, true);
+        api.events.emit('noble_scan_start');
       }
     } catch (exp) {
       console.log('error creating bluetooth connection', exp);

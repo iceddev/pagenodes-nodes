@@ -13,7 +13,6 @@ const isoNodes = [
   require("./core/comment"),
   require("./io/http"),
   require("./io/socketio"),
-  // require("./io/meshblu"),
   require("./io/mqtt"),
   require("./io/buffer"),
   require("./parsers/JSON"),
@@ -24,8 +23,6 @@ const isoNodes = [
   require("./io/split"),
   require("./io/join"),
   require("./parsers/XML"),
-  // require("./io/gpio"),
-  // require('./io/serial'),
 ];
 
 module.exports = isoNodes;

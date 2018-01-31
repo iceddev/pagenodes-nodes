@@ -21,6 +21,7 @@ module.exports = function(PN) {
     //icon: "leveldb.png",
     faChar: '&#xf1c0;', //database
     fontColor: "#FFF",
+    faColor: "#FFF",
     label: function() {
       return this.name || "localwrite";
     },
@@ -78,6 +79,7 @@ module.exports = function(PN) {
     outputs: 1,
     faChar: '&#xf1c0;', //database
     fontColor: "#FFF",
+    faColor: "#FFF",
     label: function() {
       return this.name || "localread";
     },
@@ -107,4 +109,3 @@ module.exports = function(PN) {
     renderDescription: () => <p>Reads data in localStorage</p>
   });
 }
-

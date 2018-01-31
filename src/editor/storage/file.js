@@ -15,6 +15,7 @@ module.exports = function(PN) {
     inputs: 0,
     outputs: 1,
     faChar: "&#xf016;", //file-o
+    faColor: "#FFF",
     fontColor: "#FFF",
     label: function () {
       return this.name || 'file';
@@ -74,4 +75,3 @@ module.exports = function(PN) {
     renderDescription: () => <p>Inject a File</p>
   })
 }
-

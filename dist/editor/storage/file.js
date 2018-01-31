@@ -17,6 +17,7 @@ module.exports = function (PN) {
     inputs: 0,
     outputs: 1,
     faChar: "&#xf016;", //file-o
+    faColor: "#FFF",
     fontColor: "#FFF",
     label: function label() {
       return this.name || 'file';

@@ -57,23 +57,6 @@ function createNode(PN){
           receiveTopic: n.subTopic
         });
       }
-      else if(n.connectionType === 'meshblu'){
-        try{ require('node-rsa'); }catch(exp){}
-        var meshblu = require('meshblu');
-        VirtualSerialPort = require('meshblu-virtual-serial').SerialPort;
-
-        client = meshblu.createConnection({
-          uuid: n.uuid,
-          token: n.token,
-          server: n.meshbluServer
-        });
-
-        client.once('ready', function(data){
-          node.sp.emit('open', {});
-        });
-        node.sp = new VirtualSerialPort(client, n.sendUuid);
-        node.client = client;
-      }
       else if(n.connectionType === 'webusb-serial'){
         VirtualSerialPort = require('webusb-serial').SerialPort;
         node.sp = new VirtualSerialPort();

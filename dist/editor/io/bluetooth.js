@@ -10,6 +10,7 @@ module.exports = function (PN) {
     category: 'hardware',
     defaults: {
       name: { value: "" },
+      deviceName: { value: "" },
       characteristicId: { value: "", required: true },
       // connection: {type:"bluetooth-device", required: true}
       bleServiceId: { value: "", required: true }
@@ -21,12 +22,13 @@ module.exports = function (PN) {
     faColor: "#FFF",
     fontColor: "#FFF",
     label: function label() {
-      return this.name || this.topic || "bluetooth";
+      return this.name || this.deviceName || "bluetooth";
     },
     render: function render() {
       return React.createElement(
         'div',
         null,
+        React.createElement(TextRow, { name: 'deviceName', label: 'device name', icon: 'gear' }),
         React.createElement(TextRow, { name: 'bleServiceId', label: 'service', icon: 'gear' }),
         React.createElement(TextRow, { name: 'characteristicId', label: 'character...Id', icon: 'gear' }),
         React.createElement(NameRow, null)
@@ -61,6 +63,7 @@ module.exports = function (PN) {
     category: 'hardware',
     defaults: {
       name: { value: "" },
+      deviceName: { value: "" },
       characteristicId: { value: "", required: true },
       // connection: {type:"bluetooth-device", required: true},
       bleServiceId: { value: "", required: true }
@@ -79,6 +82,7 @@ module.exports = function (PN) {
       return React.createElement(
         'div',
         null,
+        React.createElement(TextRow, { name: 'deviceName', label: 'device name', icon: 'gear' }),
         React.createElement(TextRow, { name: 'bleServiceId', label: 'service', icon: 'gear' }),
         React.createElement(TextRow, { name: 'characteristicId', label: 'char... Id', icon: 'gear' }),
         React.createElement(NameRow, null)

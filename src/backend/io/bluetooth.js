@@ -58,13 +58,18 @@ function init(PN) {
 
     }
 
-    node.status({fill:"yellow",shape:"dot",text:"connecting..."});
+    // node.status({fill:"yellow",shape:"dot",text:"connecting..."});
 
     if(ble.peripheral && ble.ready){
       getCharacteristic();
     }else{
       ble.events.on('ready', getCharacteristic);
     }
+
+    function handleNobleScanStart(err){
+      node.status({fill:"yellow",shape:"dot",text:"connecting..."});
+    }
+    ble.events.on('noble_scan_start', handleNobleScanStart);
 
     function handleNobleError(err){
       node.status({fill:"red",shape:"dot",text:err});
@@ -78,6 +83,7 @@ function init(PN) {
 
     node.on('close', function() {
       ble.events.removeListener('noble_error', handleNobleError);
+      ble.events.removeListener('noble_scan_start', handleNobleScanStart);
       ble.events.removeListener('disconnect', handleNobleDisconnect);
       ble.events.removeListener('ready', getCharacteristic);
       if(node.characteristic){
@@ -121,13 +127,16 @@ function init(PN) {
 
     }
 
-    node.status({fill:"yellow",shape:"dot",text:"connecting..."});
-
     if(ble.peripheral && ble.ready){
       getCharacteristic();
     }else{
       ble.events.on('ready', getCharacteristic);
     }
+
+    function handleNobleScanStart(err){
+      node.status({fill:"yellow",shape:"dot",text:"connecting..."});
+    }
+    ble.events.on('noble_scan_start', handleNobleScanStart);
 
     function handleNobleError(err){
       node.status({fill:"red",shape:"dot",text:err});
@@ -141,6 +150,7 @@ function init(PN) {
 
     node.on('close', function() {
       ble.events.removeListener('noble_error', handleNobleError);
+      ble.events.removeListener('noble_scan_start', handleNobleScanStart);
       ble.events.removeListener('disconnect', handleNobleDisconnect);
       ble.events.removeListener('ready', getCharacteristic);
       clearInterval(intervalId);

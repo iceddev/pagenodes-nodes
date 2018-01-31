@@ -1,4 +1,3 @@
-const isoNodes = require('./isoNodes');
 
 const browserNodes = [
   require("./core/espeak"),
@@ -21,4 +20,4 @@ const browserNodes = [
   require("./io/serialconnection-browser"),
 ];
 
-module.exports = isoNodes.concat(browserNodes);
+module.exports = browserNodes;

@@ -7,6 +7,7 @@ module.exports = function(PN){
     category: 'hardware',
     defaults: {
       name: {value:""},
+      deviceName: {value:""},
       characteristicId: {value: "", required: true},
       // connection: {type:"bluetooth-device", required: true}
       bleServiceId : {value:"", required: true}
@@ -18,12 +19,12 @@ module.exports = function(PN){
     faColor: "#FFF",
     fontColor: "#FFF",
     label: function() {
-      return this.name||this.topic||"bluetooth";
+      return this.name||this.deviceName||"bluetooth";
     },
     render: function () {
       return (
         <div>
-
+          <TextRow name="deviceName" label="device name" icon="gear" />
           <TextRow name="bleServiceId" label="service" icon="gear" />
           <TextRow name="characteristicId" label="character...Id" icon="gear" />
           <NameRow/>
@@ -48,6 +49,7 @@ module.exports = function(PN){
     category: 'hardware',
     defaults: {
       name: {value:""},
+      deviceName: {value:""},
       characteristicId: {value: "", required: true},
       // connection: {type:"bluetooth-device", required: true},
       bleServiceId : {value:"", required: true}
@@ -66,6 +68,7 @@ module.exports = function(PN){
       return (
         <div>
 
+          <TextRow name="deviceName" label="device name" icon="gear" />
           <TextRow name="bleServiceId" label="service" icon="gear" />
           <TextRow name="characteristicId" label="char... Id" icon="gear" />
           <NameRow/>

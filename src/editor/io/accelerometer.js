@@ -1,7 +1,7 @@
 module.exports = function(PN){
   PN.nodes.registerType('orientation',{
     category: 'hardware',
-    color: "#DA523F",
+    color:'#C7E9C0', //Light-green
     defaults: {
       name: {value:""},
       refreshInterval: {value: "300", required: false}
@@ -40,4 +40,3 @@ module.exports = function(PN){
     renderDescription: () => <p>Accelerometer node</p>
   });
 };
-
