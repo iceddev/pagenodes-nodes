@@ -20,14 +20,14 @@ module.exports = function(PN) {
       this.repeat = this.repeat * 1000;
       if (PN.settings.verbose) { this.log(PN._("inject.repeat",this)); }
       this.interval_id = setInterval( function() {
-        node.emit("input",{});
+        node.emit("emitMsg",{});
       }, this.repeat );
     } else if (this.crontab) {
       if (PN.settings.verbose) { this.log(PN._("inject.crontab",this)); }
     }
 
     if (this.once) {
-      setTimeout( function(){ node.emit("input",{}); }, 100);
+      setTimeout( function(){ node.emit("emitMsg",{}); }, 100);
     }
 
     this.on('emitMsg', () => {

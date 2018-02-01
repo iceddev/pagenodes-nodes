@@ -4,7 +4,7 @@
 var _ = require('lodash');
 var globalContext = require('../globalContext');
 
-var WW_SCRIPT = '/function-worker.bundle.js';
+var WW_SCRIPT = './function-worker.bundle.js';
 
 module.exports = function (PN) {
   "use strict";

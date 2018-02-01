@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const globalContext = require('../globalContext');
 
-const WW_SCRIPT = '/function-worker.bundle.js';
+const WW_SCRIPT = './function-worker.bundle.js';
 
 module.exports = function(PN) {
   "use strict";
@@ -84,4 +84,3 @@ module.exports = function(PN) {
   }
   PN.nodes.registerType("function",FunctionNode);
 };
-

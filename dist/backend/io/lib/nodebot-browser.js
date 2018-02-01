@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
-var WW_SCRIPT = '/j5-worker.bundle.js';
+var WW_SCRIPT = './j5-worker.bundle.js';
 var globalContext = require('../../globalContext');
 var ble = require('./blePeripheral');
 

@@ -31,9 +31,7 @@
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-es2015-loose": "^8.0.0",
     "babel-preset-react": "^6.16.0",
-    "babel-preset-stage-0": "^6.16.0",
-    "chai": "^3.5.0",
-    "mocha": "^2.4.5"
+    "babel-preset-stage-0": "^6.16.0"
   },
   "dependencies": {},
   "homepage": "https://github.com/iceddev/pagenodes-nodes#readme"

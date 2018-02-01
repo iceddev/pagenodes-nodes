@@ -25,7 +25,7 @@ module.exports = function (PN) {
         this.log(PN._("inject.repeat", this));
       }
       this.interval_id = setInterval(function () {
-        node.emit("input", {});
+        node.emit("emitMsg", {});
       }, this.repeat);
     } else if (this.crontab) {
       if (PN.settings.verbose) {
@@ -35,7 +35,7 @@ module.exports = function (PN) {
 
     if (this.once) {
       setTimeout(function () {
-        node.emit("input", {});
+        node.emit("emitMsg", {});
       }, 100);
     }
 

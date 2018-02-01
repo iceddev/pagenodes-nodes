@@ -1,4 +1,6 @@
-process.hrtime = require('browser-process-hrtime');
+if(process.env.BROWSER) {
+  process.hrtime = require('browser-process-hrtime');
+}
 
 //Simple node to introduce a pause into a flow
 module.exports = function(PN) {
@@ -180,4 +182,3 @@ module.exports = function(PN) {
   }
   PN.nodes.registerType("delay",DelayNode);
 }
-
