@@ -2,9 +2,15 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var _ = require('lodash');
 
-var WW_SCRIPT = '/shape-worker.bundle.js';
+var WW_SCRIPT = './shape-worker.bundle.js';
 
 var worker = void 0;
 
@@ -76,60 +82,68 @@ function crop(img, left, top, width, height) {
 }
 
 module.exports = function (PN) {
+  var ImageNode = function (_PN$Node) {
+    _inherits(ImageNode, _PN$Node);
 
-  function ImageNode(n) {
+    function ImageNode(n) {
+      _classCallCheck(this, ImageNode);
 
-    PN.nodes.createNode(this, n);
-    var node = this;
-    node.name = n.name;
-    node.operation = n.operation;
+      var _this = _possibleConstructorReturn(this, (ImageNode.__proto__ || Object.getPrototypeOf(ImageNode)).call(this, n));
 
-    function handleOperation(msg, img) {
-      var op = msg.operation || node.operation;
-      console.log('handleOperation', op, msg);
-      if (op === 'getImageData') {
-        return getImageData(img);
-      }
-      if (op === 'dataToUrl') {
-        return imageToUrl(img);
-      } else if (op === 'resize') {
-        var width = parseInt(msg.width, 10) || 100;
-        var height = parseInt(msg.height, 10) || 100;
-        return resize(img, width, height);
-      } else if (op === 'crop') {
-        var width = parseInt(msg.width, 10) || 100;
-        var height = parseInt(msg.height, 10) || 100;
-        var top = parseInt(msg.top, 10) || 0;
-        var left = parseInt(msg.left, 10) || 0;
-        return crop(img, left, top, width, height);
-      } else {
-        return msg.image;
-      }
-    }
+      var node = _this;
+      node.operation = n.operation;
 
-    try {
-      node.on("input", function (msg) {
-        try {
-          if (!msg.image) {
-            return node.send(msg);
-          }
-          if (typeof msg.image === 'string') {
-            getImage(msg.image, function (img) {
-              msg.image = handleOperation(msg, img);
-              node.send(msg);
-            });
-          } else if (_typeof(msg.image) === 'object') {
-            dataToImage(msg.image, function (img) {
-              msg.image = handleOperation(msg, img);
-            });
-          }
-        } catch (err) {
-          node.error(err);
+      function handleOperation(msg, img) {
+        var op = msg.operation || node.operation;
+        console.log('handleOperation', op, msg);
+        if (op === 'getImageData') {
+          return getImageData(img);
         }
-      });
-    } catch (err) {
-      node.error(err);
+        if (op === 'dataToUrl') {
+          return imageToUrl(img);
+        } else if (op === 'resize') {
+          var width = parseInt(msg.width, 10) || 100;
+          var height = parseInt(msg.height, 10) || 100;
+          return resize(img, width, height);
+        } else if (op === 'crop') {
+          var width = parseInt(msg.width, 10) || 100;
+          var height = parseInt(msg.height, 10) || 100;
+          var top = parseInt(msg.top, 10) || 0;
+          var left = parseInt(msg.left, 10) || 0;
+          return crop(img, left, top, width, height);
+        } else {
+          return msg.image;
+        }
+      }
+
+      try {
+        node.on("input", function (msg) {
+          try {
+            if (!msg.image) {
+              return node.send(msg);
+            }
+            if (typeof msg.image === 'string') {
+              getImage(msg.image, function (img) {
+                msg.image = handleOperation(msg, img);
+                node.send(msg);
+              });
+            } else if (_typeof(msg.image) === 'object') {
+              dataToImage(msg.image, function (img) {
+                msg.image = handleOperation(msg, img);
+              });
+            }
+          } catch (err) {
+            node.error(err);
+          }
+        });
+      } catch (err) {
+        node.error(err);
+      }
+      return _this;
     }
-  }
+
+    return ImageNode;
+  }(PN.Node);
+
   PN.nodes.registerType("image", ImageNode);
 };

@@ -2,6 +2,12 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 module.exports = function (PN) {
   "use strict";
 
@@ -10,62 +16,71 @@ module.exports = function (PN) {
   var debuglength = PN.settings.debugMaxLength || 1000;
   var useColors = false;
 
-  function DebugNode(n) {
-    PN.nodes.createNode(this, n);
-    this.name = n.name;
-    this.complete = (n.complete || "payload").toString();
+  var DebugNode = function (_PN$Node) {
+    _inherits(DebugNode, _PN$Node);
 
-    if (this.complete === "false") {
-      this.complete = "payload";
+    function DebugNode(n) {
+      _classCallCheck(this, DebugNode);
+
+      var _this = _possibleConstructorReturn(this, (DebugNode.__proto__ || Object.getPrototypeOf(DebugNode)).call(this, n));
+
+      _this.complete = (n.complete || "payload").toString();
+
+      if (_this.complete === "false") {
+        _this.complete = "payload";
+      }
+
+      _this.console = n.console;
+      _this.active = n.active === null || typeof n.active === "undefined" || n.active;
+      var node = _this;
+
+      _this.on("input", function (msg) {
+        var file = null;
+        if (msg.fileInfo && msg.fileInfo.name && msg.fileInfo.size && msg.fileInfo.data) {
+          file = { fileInfo: msg.fileInfo };
+        }
+        if (this.complete === "true") {
+          // debug complete msg object
+          if (this.console === "true") {
+            node.log("\n" + util.inspect(msg, { colors: useColors, depth: 10 }));
+          }
+          if (this.active) {
+            sendDebug({ id: this.id, name: this.name, topic: msg.topic, msg: msg, _path: msg._path, image: msg.image, file: file });
+          }
+        } else {
+          // debug user defined msg property
+          var property = "payload";
+          var output = msg[property];
+          if (this.complete !== "false" && typeof this.complete !== "undefined") {
+            property = this.complete;
+            var propertyParts = property.split(".");
+            try {
+              output = propertyParts.reduce(function (obj, i) {
+                return obj[i];
+              }, msg);
+            } catch (err) {
+              output = undefined;
+            }
+          }
+          if (this.console === "true") {
+            if (typeof output === "string") {
+              node.log((output.indexOf("\n") !== -1 ? "\n" : "") + output);
+            } else if ((typeof output === "undefined" ? "undefined" : _typeof(output)) === "object") {
+              node.log("\n" + util.inspect(output, { colors: useColors, depth: 10 }));
+            } else {
+              node.log(util.inspect(output, { colors: useColors }));
+            }
+          }
+          if (this.active) {
+            sendDebug({ id: this.id, name: this.name, topic: msg.topic, property: property, msg: output, _path: msg._path, image: msg.image, file: file });
+          }
+        }
+      });
+      return _this;
     }
 
-    this.console = n.console;
-    this.active = n.active === null || typeof n.active === "undefined" || n.active;
-    var node = this;
-
-    this.on("input", function (msg) {
-      var file = null;
-      if (msg.fileInfo && msg.fileInfo.name && msg.fileInfo.size && msg.fileInfo.data) {
-        file = { fileInfo: msg.fileInfo };
-      }
-      if (this.complete === "true") {
-        // debug complete msg object
-        if (this.console === "true") {
-          node.log("\n" + util.inspect(msg, { colors: useColors, depth: 10 }));
-        }
-        if (this.active) {
-          sendDebug({ id: this.id, name: this.name, topic: msg.topic, msg: msg, _path: msg._path, image: msg.image, file: file });
-        }
-      } else {
-        // debug user defined msg property
-        var property = "payload";
-        var output = msg[property];
-        if (this.complete !== "false" && typeof this.complete !== "undefined") {
-          property = this.complete;
-          var propertyParts = property.split(".");
-          try {
-            output = propertyParts.reduce(function (obj, i) {
-              return obj[i];
-            }, msg);
-          } catch (err) {
-            output = undefined;
-          }
-        }
-        if (this.console === "true") {
-          if (typeof output === "string") {
-            node.log((output.indexOf("\n") !== -1 ? "\n" : "") + output);
-          } else if ((typeof output === "undefined" ? "undefined" : _typeof(output)) === "object") {
-            node.log("\n" + util.inspect(output, { colors: useColors, depth: 10 }));
-          } else {
-            node.log(util.inspect(output, { colors: useColors }));
-          }
-        }
-        if (this.active) {
-          sendDebug({ id: this.id, name: this.name, topic: msg.topic, property: property, msg: output, _path: msg._path, image: msg.image, file: file });
-        }
-      }
-    });
-  }
+    return DebugNode;
+  }(PN.Node);
 
   PN.nodes.registerType("debug", DebugNode);
 

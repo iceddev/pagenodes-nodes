@@ -1,12 +1,23 @@
 "use strict";
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 module.exports = function (PN) {
-  "use strict";
+  var RemoteNode = function (_PN$Node) {
+    _inherits(RemoteNode, _PN$Node);
 
-  function RemoteNode(n) {
+    function RemoteNode() {
+      _classCallCheck(this, RemoteNode);
 
-    PN.nodes.createNode(this, n);
-  }
+      return _possibleConstructorReturn(this, (RemoteNode.__proto__ || Object.getPrototypeOf(RemoteNode)).apply(this, arguments));
+    }
+
+    return RemoteNode;
+  }(PN.Node);
 
   RemoteNode.groupName = 'iot buttons';
   PN.nodes.registerType("iot buttons", RemoteNode);
@@ -25,10 +36,17 @@ module.exports = function (PN) {
     });
   });
 
-  function SliderNode(n) {
+  var SliderNode = function (_PN$Node2) {
+    _inherits(SliderNode, _PN$Node2);
 
-    PN.nodes.createNode(this, n);
-  }
+    function SliderNode() {
+      _classCallCheck(this, SliderNode);
+
+      return _possibleConstructorReturn(this, (SliderNode.__proto__ || Object.getPrototypeOf(SliderNode)).apply(this, arguments));
+    }
+
+    return SliderNode;
+  }(PN.Node);
 
   SliderNode.groupName = 'iot sliders';
   PN.nodes.registerType("iot sliders", SliderNode);
