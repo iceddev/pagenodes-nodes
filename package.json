@@ -1,6 +1,6 @@
 {
   "name": "pagenodes-nodes",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "node definitions for pagenodes",
   "main": "index.js",
   "scripts": {
@@ -33,6 +33,15 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0"
   },
-  "dependencies": {},
+  "peerDependencies": {
+    "funsocietyirc-client": "^0.1.0",
+    "is-utf8": "^0.2.1",
+    "mqtt": "^2.15.1",
+    "mustache": "^2.3.0",
+    "rest": "^2.0.0",
+    "sentiment": "^4.2.0",
+    "socket.io-client": "^2.0.4",
+    "xml2js": "^0.4.19"
+  },
   "homepage": "https://github.com/iceddev/pagenodes-nodes#readme"
 }

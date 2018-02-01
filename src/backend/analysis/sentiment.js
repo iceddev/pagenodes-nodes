@@ -1,21 +1,22 @@
 module.exports = function(PN) {
-  "use strict";
-  var sentiment = require('sentiment');
 
-  function SentimentNode(n) {
-    PN.nodes.createNode(this,n);
-    var node = this;
+  const sentiment = require('sentiment');
 
-    this.on("input", function(msg) {
-      if (msg.hasOwnProperty("payload")) {
-        sentiment(msg.payload, msg.overrides || null, function (err, result) {
-          msg.sentiment = result;
-          node.send(msg);
-        });
-      }
-      else { node.send(msg); } // If no payload - just pass it on.
-    });
+  class SentimentNode extends PN.Node {
+    constructor(n) {
+      super(n);
+
+      this.on("input", (msg) => {
+        if (msg.hasOwnProperty("payload")) {
+          sentiment(msg.payload, msg.overrides || null, (err, result) => {
+            msg.sentiment = result;
+            this.send(msg);
+          });
+        }
+        else { this.send(msg); } // If no payload - just pass it on.
+      });
+    }
   }
-  PN.nodes.registerType("sentiment",SentimentNode);
-}
 
+  PN.nodes.registerType("sentiment", SentimentNode);
+}

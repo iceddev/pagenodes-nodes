@@ -1,11 +1,7 @@
 module.exports = function(PN) {
-  "use strict";
 
-  function RemoteNode(n) {
 
-    PN.nodes.createNode(this,n);
-
-  }
+  class RemoteNode extends PN.Node {}
 
   RemoteNode.groupName = 'iot buttons';
   PN.nodes.registerType("iot buttons",RemoteNode);
@@ -26,11 +22,7 @@ module.exports = function(PN) {
   });
 
 
-  function SliderNode(n) {
-
-    PN.nodes.createNode(this,n);
-
-  }
+  class SliderNode extends PN.Node {}
 
   SliderNode.groupName = 'iot sliders';
   PN.nodes.registerType("iot sliders",SliderNode);

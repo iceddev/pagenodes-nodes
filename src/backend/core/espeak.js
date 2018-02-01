@@ -1,27 +1,24 @@
 'use strict';
 
 module.exports = function(PN) {
-  var util = require('util');
-  var events = require('events');
-  var debuglength = PN.settings.debugMaxLength||1000;
-  var useColors = false;
 
-  function EspeakNode(n) {
-    PN.nodes.createNode(this, n);
-    this.name = n.name;
-    this.variant = n.variant;
+  class EspeakNode extends PN.Node {
+    constructor(n) {
+      super(n);
+      this.variant = n.variant;
 
-    this.console = n.console;
-    this.active = (n.active === null || typeof n.active === 'undefined') || n.active;
-    var node = this;
+      this.console = n.console;
+      this.active = (n.active === null || typeof n.active === 'undefined') || n.active;
+      var node = this;
 
-    this.on('input',function(msg) {
+      this.on('input',function(msg) {
 
-      if (this.active) {
-        sendEspeak({id:this.id, name:this.name, topic:msg.topic, msg:msg, variant: msg.variant || node.variant});
-      }
+        if (this.active) {
+          sendEspeak({id:this.id, name:this.name, topic:msg.topic, msg:msg, variant: msg.variant || node.variant});
+        }
 
-    });
+      });
+    }
   }
 
   PN.nodes.registerType('espeak', EspeakNode);

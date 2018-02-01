@@ -1,11 +1,7 @@
 const _ = require('lodash');
 
 module.exports = function(PN) {
-  function FileNode(config) {
-    PN.nodes.createNode(this,config);
-    var node = this;
-    console.log('File Node Loaded');
-  }
+  class FileNode extends PN.Node {}
   PN.nodes.registerType("file",FileNode);
 
   PN.events.on('rpc_file_upload', function(data) {
@@ -18,4 +14,3 @@ module.exports = function(PN) {
     }
   });
 };
-

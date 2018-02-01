@@ -6,62 +6,64 @@ module.exports = function(PN) {
   var debuglength = PN.settings.debugMaxLength||1000;
   var useColors = false;
 
-  function DebugNode(n) {
-    PN.nodes.createNode(this,n);
-    this.name = n.name;
-    this.complete = (n.complete||"payload").toString();
+  class DebugNode extends PN.Node {
+    constructor(n) {
+      super(n);
+      this.complete = (n.complete||"payload").toString();
 
-    if (this.complete === "false") {
-      this.complete = "payload";
+      if (this.complete === "false") {
+        this.complete = "payload";
+      }
+
+      this.console = n.console;
+      this.active = (n.active === null || typeof n.active === "undefined") || n.active;
+      var node = this;
+
+      this.on("input",function(msg) {
+        var file = null;
+        if(msg.fileInfo && msg.fileInfo.name && msg.fileInfo.size && msg.fileInfo.data){
+          file = {fileInfo: msg.fileInfo};
+        }
+        if (this.complete === "true") {
+          // debug complete msg object
+          if (this.console === "true") {
+            node.log("\n"+util.inspect(msg, {colors:useColors, depth:10}));
+          }
+          if (this.active) {
+            sendDebug({id:this.id,name:this.name,topic:msg.topic,msg:msg,_path:msg._path, image: msg.image, file: file});
+          }
+
+        } else {
+          // debug user defined msg property
+          var property = "payload";
+          var output = msg[property];
+          if (this.complete !== "false" && typeof this.complete !== "undefined") {
+            property = this.complete;
+            var propertyParts = property.split(".");
+            try {
+              output = propertyParts.reduce(function (obj, i) {
+                return obj[i];
+              }, msg);
+            } catch (err) {
+              output = undefined;
+            }
+          }
+          if (this.console === "true") {
+            if (typeof output === "string") {
+              node.log((output.indexOf("\n") !== -1 ? "\n" : "") + output);
+            } else if (typeof output === "object") {
+              node.log("\n"+util.inspect(output, {colors:useColors, depth:10}));
+            } else {
+              node.log(util.inspect(output, {colors:useColors}));
+            }
+          }
+          if (this.active) {
+            sendDebug({id:this.id,name:this.name,topic:msg.topic,property:property,msg:output,_path:msg._path, image: msg.image, file: file});
+          }
+        }
+      });
     }
 
-    this.console = n.console;
-    this.active = (n.active === null || typeof n.active === "undefined") || n.active;
-    var node = this;
-
-    this.on("input",function(msg) {
-      var file = null;
-      if(msg.fileInfo && msg.fileInfo.name && msg.fileInfo.size && msg.fileInfo.data){
-        file = {fileInfo: msg.fileInfo};
-      }
-      if (this.complete === "true") {
-        // debug complete msg object
-        if (this.console === "true") {
-          node.log("\n"+util.inspect(msg, {colors:useColors, depth:10}));
-        }
-        if (this.active) {
-          sendDebug({id:this.id,name:this.name,topic:msg.topic,msg:msg,_path:msg._path, image: msg.image, file: file});
-        }
-
-      } else {
-        // debug user defined msg property
-        var property = "payload";
-        var output = msg[property];
-        if (this.complete !== "false" && typeof this.complete !== "undefined") {
-          property = this.complete;
-          var propertyParts = property.split(".");
-          try {
-            output = propertyParts.reduce(function (obj, i) {
-              return obj[i];
-            }, msg);
-          } catch (err) {
-            output = undefined;
-          }
-        }
-        if (this.console === "true") {
-          if (typeof output === "string") {
-            node.log((output.indexOf("\n") !== -1 ? "\n" : "") + output);
-          } else if (typeof output === "object") {
-            node.log("\n"+util.inspect(output, {colors:useColors, depth:10}));
-          } else {
-            node.log(util.inspect(output, {colors:useColors}));
-          }
-        }
-        if (this.active) {
-          sendDebug({id:this.id,name:this.name,topic:msg.topic,property:property,msg:output,_path:msg._path, image: msg.image, file: file});
-        }
-      }
-    });
   }
 
   PN.nodes.registerType("debug",DebugNode);
@@ -149,4 +151,3 @@ module.exports = function(PN) {
     }
   });
 };
-

@@ -1,8 +1,5 @@
 module.exports = function(PN) {
-  "use strict";
-  function UnknownNode(n) {
-    PN.nodes.createNode(this,n);
-  }
+  class UnknownNode extends PN.Node {}
+
   PN.nodes.registerType("unknown",UnknownNode);
 }
-

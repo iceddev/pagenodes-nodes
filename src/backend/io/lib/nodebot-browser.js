@@ -100,100 +100,101 @@ function createNode(PN){
   }
 
 
+  class NodeBotNode extends PN.Node {
+    constructor(n) {
+      super(n);
+      var node = this;
+      node.boardType = n.boardType;
 
-  function nodebotNode(n) {
-    PN.nodes.createNode(this,n);
-    var node = this;
-    node.boardType = n.boardType;
 
-
-    node.worker = new Worker(WW_SCRIPT);
-    node.worker.onmessage = function(evt){
-      try{
-        var data = evt.data;
-        var type = data.type;
-        // console.log('j5 node onmessage', type, data);
-        if(type === 'serial' && data.data && node.sp){
-          node.sp.write(data.data);
-        }
-        else if(type === 'workerReady'){
-          node.emit('workerReady', node);
-          if(node.boardType === 'firmata' || node.boardType === 'playground-io'){
-            connectSerial(node, n);
+      node.worker = new Worker(WW_SCRIPT);
+      node.worker.onmessage = function(evt){
+        try{
+          var data = evt.data;
+          var type = data.type;
+          // console.log('j5 node onmessage', type, data);
+          if(type === 'serial' && data.data && node.sp){
+            node.sp.write(data.data);
           }
-          else{
-            node.worker.postMessage({type: 'startJ5', options: _.clone(n)});
+          else if(type === 'workerReady'){
+            node.emit('workerReady', node);
+            if(node.boardType === 'firmata' || node.boardType === 'playground-io'){
+              connectSerial(node, n);
+            }
+            else{
+              node.worker.postMessage({type: 'startJ5', options: _.clone(n)});
+            }
           }
-        }
-        else if(type === 'boardReady'){
-          // connectedStatus(node);
-          // node.worker.postMessage({type: 'run', data: node.func});
-          node.emit('boardReady', {});
-        }
-        else if(type === 'pixelReady'){
-          node.emit('pixelReady', {nodeId: data.nodeId});
-        }
-        else if(type === 'error'){
-          node.error(new Error(data.message));
-        }
-        else if (type === 'warn'){
-          node.warn(data.error)
-        }
-        else if (type === 'log'){
-          node.log(data.msg)
-        }
-        else if (type === 'status'){
-          node.status(data.status);
-        }
-        else if (type === 'send' && data.msg){
-          // console.log('send from worker', data, 'send_' + data.nodeId);
-          node.emit('send_' + data.nodeId, data.msg);
-
-        }
-        else if(type === 'inputSubscription'){
-          node.emit('inputSubscription_' + data.nodeId, data.value);
-        }
-        else if (type === 'globalSet' && data.rpcId){
-          globalContext[data.key] = data.value;
-          node.worker.postMessage({rpcId: data.rpcId, type: 'rpc'});
-        }
-        else if (type === 'globalGet' && data.rpcId){
-          const value = globalContext[data.key];
-          node.worker.postMessage({rpcId: data.rpcId, type: 'rpc', value: value});
-        }
-      }catch(exp){
-        node.error(exp);
-      }
-    };
-
-    node.on('close', function(){
-      // console.log('terminating j5 worker for ', node.id);
-      node.worker.terminate();
-
-      try{
-        if(node.sp){
-          if(node.sp.close){
-            node.sp.close(noop);
-          }else if(node.sp.end){
-            node.sp.end(noop);
+          else if(type === 'boardReady'){
+            // connectedStatus(node);
+            // node.worker.postMessage({type: 'run', data: node.func});
+            node.emit('boardReady', {});
           }
-        }
+          else if(type === 'pixelReady'){
+            node.emit('pixelReady', {nodeId: data.nodeId});
+          }
+          else if(type === 'error'){
+            node.error(new Error(data.message));
+          }
+          else if (type === 'warn'){
+            node.warn(data.error)
+          }
+          else if (type === 'log'){
+            node.log(data.msg)
+          }
+          else if (type === 'status'){
+            node.status(data.status);
+          }
+          else if (type === 'send' && data.msg){
+            // console.log('send from worker', data, 'send_' + data.nodeId);
+            node.emit('send_' + data.nodeId, data.msg);
 
-        if(node.client && node.client.stop){
-          node.client.stop(noop);
+          }
+          else if(type === 'inputSubscription'){
+            node.emit('inputSubscription_' + data.nodeId, data.value);
+          }
+          else if (type === 'globalSet' && data.rpcId){
+            globalContext[data.key] = data.value;
+            node.worker.postMessage({rpcId: data.rpcId, type: 'rpc'});
+          }
+          else if (type === 'globalGet' && data.rpcId){
+            const value = globalContext[data.key];
+            node.worker.postMessage({rpcId: data.rpcId, type: 'rpc', value: value});
+          }
+        }catch(exp){
+          node.error(exp);
         }
-        if(node.client && node.client.close){
-          node.client.close(noop);
+      };
+
+      node.on('close', function(){
+        // console.log('terminating j5 worker for ', node.id);
+        node.worker.terminate();
+
+        try{
+          if(node.sp){
+            if(node.sp.close){
+              node.sp.close(noop);
+            }else if(node.sp.end){
+              node.sp.end(noop);
+            }
+          }
+
+          if(node.client && node.client.stop){
+            node.client.stop(noop);
+          }
+          if(node.client && node.client.close){
+            node.client.close(noop);
+          }
+
+        }catch(exp){
+          console.log('error closing', exp);
         }
+      });
 
-      }catch(exp){
-        console.log('error closing', exp);
-      }
-    });
-
+    }
   }
   nodebotNode.groupName = 'gpio';
-  PN.nodes.registerType("nodebot", nodebotNode);
+  PN.nodes.registerType("nodebot", NodeBotNode);
 
 
   PN.events.on('rpc_gpio/listSerial', function(msg){

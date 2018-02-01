@@ -1,8 +1,4 @@
 module.exports = function(PN) {
-  "use strict";
-  function CommentNode(n) {
-    PN.nodes.createNode(this,n);
-  }
+  class CommentNode extends PN.Node {}
   PN.nodes.registerType("comment",CommentNode);
 }
-
