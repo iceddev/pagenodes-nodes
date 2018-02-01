@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const WW_SCRIPT = '/shape-worker.bundle.js';
+const WW_SCRIPT = './shape-worker.bundle.js';
 
 let worker;
 
@@ -73,62 +73,62 @@ function crop(img, left, top, width, height ) {
 
 module.exports = function(PN) {
 
-  function ImageNode(n) {
+  class ImageNode extends PN.Node {
+    constructor(n) {
+      super(n);
+      var node = this;
+      node.operation = n.operation;
 
-    PN.nodes.createNode(this,n);
-    var node = this;
-    node.name = n.name;
-    node.operation = n.operation;
-
-    function handleOperation(msg, img) {
-      var op = msg.operation || node.operation;
-      console.log('handleOperation', op, msg);
-      if(op === 'getImageData') {
-        return getImageData(img);
-      }
-      if(op === 'dataToUrl') {
-        return imageToUrl(img);
-      }
-      else if(op === 'resize') {
-        var width = parseInt(msg.width, 10) || 100;
-        var height = parseInt(msg.height, 10) || 100;
-        return resize(img, width, height);
-      }
-      else if(op === 'crop') {
-        var width = parseInt(msg.width, 10) || 100;
-        var height = parseInt(msg.height, 10) || 100;
-        var top = parseInt(msg.top, 10) || 0;
-        var left = parseInt(msg.left, 10) || 0;
-        return crop(img, left, top, width, height );
-      }
-      else {
-        return msg.image;
-      }
-    }
-
-    try {
-      node.on("input", function(msg) {
-        try {
-          if(!msg.image) {
-            return node.send(msg);
-          }
-          if(typeof msg.image === 'string') {
-            getImage(msg.image, function(img){
-              msg.image = handleOperation(msg, img);
-              node.send(msg);
-            });
-          } else if(typeof msg.image === 'object') {
-            dataToImage(msg.image, function(img) {
-              msg.image = handleOperation(msg, img);
-            });
-          }
-
-        } catch(err) {
-          node.error(err);
+      function handleOperation(msg, img) {
+        var op = msg.operation || node.operation;
+        console.log('handleOperation', op, msg);
+        if(op === 'getImageData') {
+          return getImageData(img);
         }
-      });
-    } catch(err) {
-      node.error(err);
+        if(op === 'dataToUrl') {
+          return imageToUrl(img);
+        }
+        else if(op === 'resize') {
+          var width = parseInt(msg.width, 10) || 100;
+          var height = parseInt(msg.height, 10) || 100;
+          return resize(img, width, height);
+        }
+        else if(op === 'crop') {
+          var width = parseInt(msg.width, 10) || 100;
+          var height = parseInt(msg.height, 10) || 100;
+          var top = parseInt(msg.top, 10) || 0;
+          var left = parseInt(msg.left, 10) || 0;
+          return crop(img, left, top, width, height );
+        }
+        else {
+          return msg.image;
+        }
+      }
+
+      try {
+        node.on("input", function(msg) {
+          try {
+            if(!msg.image) {
+              return node.send(msg);
+            }
+            if(typeof msg.image === 'string') {
+              getImage(msg.image, function(img){
+                msg.image = handleOperation(msg, img);
+                node.send(msg);
+              });
+            } else if(typeof msg.image === 'object') {
+              dataToImage(msg.image, function(img) {
+                msg.image = handleOperation(msg, img);
+              });
+            }
+
+          } catch(err) {
+            node.error(err);
+          }
+        });
+      } catch(err) {
+        node.error(err);
+      }
     }
   }
   PN.nodes.registerType("image",ImageNode);

@@ -1,148 +1,143 @@
-
-var _ = require('lodash');
-
+const _ = require('lodash');
 
 function init(PN) {
 
+  class MidiInNode extends PN.Node {
+    constructor(n) {
+      super(n);
+      var node = this;
+      node.deviceId = n.deviceId;
 
+      node.status({fill:"yellow",shape:"dot",text:"connecting..."});
 
-  function midiInNode(n) {
-    var node = this;
-    PN.nodes.createNode(node,n);
-    node.deviceId = n.deviceId;
-
-
-
-    node.status({fill:"yellow",shape:"dot",text:"connecting..."});
-
-    // request MIDI access
-    if (navigator.requestMIDIAccess) {
-        navigator.requestMIDIAccess({
-            sysex: false
-        }).then(onMIDISuccess, onMIDIFailure);
-    } else {
-        node.error("No MIDI support in your browser.");
-    }
-
-
-    // midi functions
-    function onMIDISuccess(midiAccess) {
-        // when we get a succesful response, run this code
-        node.midi = midiAccess; // this is our raw MIDI data, inputs, outputs, and sysex status
-
-        var inputs = Array.from(node.midi.inputs.values());
-        console.log('inputs', inputs);
-
-        _.forEach(inputs, function(input){
-          if(!node.deviceId){
-            node.device = input;
-            return false;
-          }
-          else if(node.deviceId == input.id){
-            node.device = input;
-            return false;
-          }
-        });
-
-        if(node.device){
-          node.status({fill:"green",shape:"dot",text:"id: " + node.device.id});
-          node.device.onmidimessage = function(message) {
-              var data = message.data; // this gives us our [command/channel, note, velocity] data.
-              console.log('MIDI data in', data); // MIDI data [144, 63, 73]
-              node.send({topic: 'midi', payload: data});
-          };
-        }
-        else{
-          node.status({fill:"red",shape:"dot",text:"disconnected"});
-        }
-    }
-
-    function onMIDIFailure(error) {
-        // when we get a failed response, run this code
-        node.error("No access to MIDI devices or your browser doesn't support WebMIDI API" + error);
-    }
-
-
-    node.on('close', function(){
-      if(node.device){
-        node.device.onmidimessage = null;
-        node.device.close();
+      // request MIDI access
+      if (navigator.requestMIDIAccess) {
+          navigator.requestMIDIAccess({
+              sysex: false
+          }).then(onMIDISuccess, onMIDIFailure);
+      } else {
+          node.error("No MIDI support in your browser.");
       }
-    });
 
+      // midi functions
+      function onMIDISuccess(midiAccess) {
+          // when we get a succesful response, run this code
+          node.midi = midiAccess; // this is our raw MIDI data, inputs, outputs, and sysex status
 
-  }
-  midiInNode.groupName = 'midi';
-  PN.nodes.registerType("midi in",midiInNode);
+          var inputs = Array.from(node.midi.inputs.values());
+          console.log('inputs', inputs);
 
-  function midiOutNode(n) {
-    var node = this;
-    PN.nodes.createNode(node,n);
-    node.deviceId = n.deviceId;
-
-
-
-    node.status({fill:"yellow",shape:"dot",text:"connecting..."});
-
-    // request MIDI access
-    if (navigator.requestMIDIAccess) {
-        navigator.requestMIDIAccess({
-            sysex: true
-        }).then(onMIDISuccess, onMIDIFailure);
-    } else {
-        node.error("No MIDI support in your browser.");
-    }
-
-
-    // midi functions
-    function onMIDISuccess(midiAccess) {
-        // when we get a succesful response, run this code
-        node.midi = midiAccess; // this is our raw MIDI data, inputs, outputs, and sysex status
-
-        var outputs = Array.from(node.midi.outputs.values());
-        console.log('outputs', outputs);
-
-        _.forEach(outputs, function(output){
-          if(!node.deviceId){
-            node.device = output;
-            return false;
-          }
-          else if(node.deviceId == output.id){
-            node.device = output;
-            return false;
-          }
-        });
-
-        if(node.device){
-          node.status({fill:"green",shape:"dot",text:"id: " + node.device.id});
-
-          node.on('input', function(msg){
-            node.device.send(new Buffer(msg.payload));
+          _.forEach(inputs, function(input){
+            if(!node.deviceId){
+              node.device = input;
+              return false;
+            }
+            else if(node.deviceId == input.id){
+              node.device = input;
+              return false;
+            }
           });
-        }
-        else{
-          node.status({fill:"red",shape:"dot",text:"disconnected"});
-        }
-    }
 
-    function onMIDIFailure(error) {
-        // when we get a failed response, run this code
-        node.error("No access to MIDI devices or your browser doesn't support WebMIDI API" + error);
-    }
-
-
-    node.on('close', function(){
-      if(node.device){
-        node.device.onmidimessage = null;
-        node.device.close();
+          if(node.device){
+            node.status({fill:"green",shape:"dot",text:"id: " + node.device.id});
+            node.device.onmidimessage = function(message) {
+                var data = message.data; // this gives us our [command/channel, note, velocity] data.
+                console.log('MIDI data in', data); // MIDI data [144, 63, 73]
+                node.send({topic: 'midi', payload: data});
+            };
+          }
+          else{
+            node.status({fill:"red",shape:"dot",text:"disconnected"});
+          }
       }
-    });
+
+      function onMIDIFailure(error) {
+          // when we get a failed response, run this code
+          node.error("No access to MIDI devices or your browser doesn't support WebMIDI API" + error);
+      }
 
 
+      node.on('close', function(){
+        if(node.device){
+          node.device.onmidimessage = null;
+          node.device.close();
+        }
+      });
+
+    }
   }
+  MidiInNode.groupName = 'midi';
+  PN.nodes.registerType("midi in",MidiInNode);
 
-  midiOutNode.groupName = 'midi';
-  PN.nodes.registerType("midi out",midiOutNode);
+  class MidiOutNode extends PN.Node {
+    constructor(n) {
+      super(n);
+      var node = this;
+      node.deviceId = n.deviceId;
+
+
+
+      node.status({fill:"yellow",shape:"dot",text:"connecting..."});
+
+      // request MIDI access
+      if (navigator.requestMIDIAccess) {
+          navigator.requestMIDIAccess({
+              sysex: true
+          }).then(onMIDISuccess, onMIDIFailure);
+      } else {
+          node.error("No MIDI support in your browser.");
+      }
+
+
+      // midi functions
+      function onMIDISuccess(midiAccess) {
+          // when we get a succesful response, run this code
+          node.midi = midiAccess; // this is our raw MIDI data, inputs, outputs, and sysex status
+
+          var outputs = Array.from(node.midi.outputs.values());
+          console.log('outputs', outputs);
+
+          _.forEach(outputs, function(output){
+            if(!node.deviceId){
+              node.device = output;
+              return false;
+            }
+            else if(node.deviceId == output.id){
+              node.device = output;
+              return false;
+            }
+          });
+
+          if(node.device){
+            node.status({fill:"green",shape:"dot",text:"id: " + node.device.id});
+
+            node.on('input', function(msg){
+              node.device.send(new Buffer(msg.payload));
+            });
+          }
+          else{
+            node.status({fill:"red",shape:"dot",text:"disconnected"});
+          }
+      }
+
+      function onMIDIFailure(error) {
+          // when we get a failed response, run this code
+          node.error("No access to MIDI devices or your browser doesn't support WebMIDI API" + error);
+      }
+
+
+      node.on('close', function(){
+        if(node.device){
+          node.device.onmidimessage = null;
+          node.device.close();
+        }
+      });
+
+
+    }
+  }
+  MidiOutNode.groupName = 'midi';
+  PN.nodes.registerType("midi out",MidiOutNode);
 
 
 
@@ -181,4 +176,3 @@ function init(PN) {
 }
 
 module.exports = init;
-

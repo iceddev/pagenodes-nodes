@@ -1,144 +1,149 @@
-var mqtt = require('mqtt');
-var isUtf8 = require('is-utf8');
-var _ = require('lodash');
+const mqtt = require('mqtt');
+const isUtf8 = require('is-utf8');
+const _ = require('lodash');
 
 function init(PN) {
 
-  function mqttBrokerNode(n) {
-    var self = this;
-    PN.nodes.createNode(self,n);
-    self.server = n.server;
+  class MQTTBrokerNode extends PN.Node {
+    constructor(n) {
+      super(n)
+      var self = this;
+      self.server = n.server;
 
-    self.username = n.username;
-    self.password = n.password;
-    self.clientId = n.clientId;
+      self.username = n.username;
+      self.password = n.password;
+      self.clientId = n.clientId;
 
-    var options = {
-      username: self.username,
-      password: self.password,
-      clientId: self.clientId
-    };
+      var options = {
+        username: self.username,
+        password: self.password,
+        clientId: self.clientId
+      };
 
-    try{
-      self.conn = mqtt.connect(self.server, options);
+      try{
+        self.conn = mqtt.connect(self.server, options);
 
-      self.conn.on('connect', function () {
-        process.nextTick(function(){
-          self.emit('connReady', self.conn);
+        self.conn.on('connect', function () {
+          process.nextTick(function(){
+            self.emit('connReady', self.conn);
+          });
         });
+
+        self.conn.on('message', function(topic, payload){
+          // console.log('mqtt message received', topic, payload);
+          if (isUtf8(payload)) {
+            payload = payload.toString();
+          }
+          self.emit('message_' + topic, payload);
+        });
+
+        self.conn.on('error', function(err){
+           console.log('error in mqtt connection', err);
+           self.emit('connError', err);
+           self.error(err);
+        });
+      }catch(exp){
+        console.log('error creating mqtt connection', exp);
+        setTimeout(function(){
+          self.emit('connError', {});
+        }, 100)
+        self.error(exp);
+      }
+
+      self.on('close', function() {
+        self.conn.end();
       });
 
-      self.conn.on('message', function(topic, payload){
-        // console.log('mqtt message received', topic, payload);
-        if (isUtf8(payload)) {
-          payload = payload.toString();
-        }
-        self.emit('message_' + topic, payload);
-      });
-
-      self.conn.on('error', function(err){
-         console.log('error in mqtt connection', err);
-         self.emit('connError', err);
-         self.error(err);
-      });
-    }catch(exp){
-      console.log('error creating mqtt connection', exp);
-      setTimeout(function(){
-        self.emit('connError', {});
-      }, 100)
-      self.error(exp);
     }
-
-    self.on('close', function() {
-      self.conn.end();
-    });
-
   }
-  mqttBrokerNode.groupName = 'mqtt';
-  PN.nodes.registerType("mqtt-broker", mqttBrokerNode);
+  MQTTBrokerNode.groupName = 'mqtt';
+  PN.nodes.registerType("mqtt-broker", MQTTBrokerNode);
 
-  function mqttInNode(n) {
-    var self = this;
-    PN.nodes.createNode(self,n);
-    self.topic = n.topic;
-    self.broker = n.broker;
-    self.brokerConfig = PN.nodes.getNode(self.broker);
+  class MQTTInNode extends PN.Node {
+    constructor(n) {
+      super(n)
+      var self = this;
+      self.topic = n.topic;
+      self.broker = n.broker;
+      self.brokerConfig = PN.nodes.getNode(self.broker);
 
-    if(self.brokerConfig){
-      self.status({fill:"yellow",shape:"dot",text:"connecting..."});
+      if(self.brokerConfig){
+        self.status({fill:"yellow",shape:"dot",text:"connecting..."});
 
-      self.brokerConfig.on('connReady', function(conn){
-        self.status({fill:"green",shape:"dot",text:"connected"});
-        self.brokerConfig.conn.subscribe(self.topic);
-      });
+        self.brokerConfig.on('connReady', function(conn){
+          self.status({fill:"green",shape:"dot",text:"connected"});
+          self.brokerConfig.conn.subscribe(self.topic);
+        });
 
-      self.brokerConfig.on('message_' + self.topic, function(payload){
-        self.send({
-          topic: self.topic,
-          payload: payload
-        })
-      });
+        self.brokerConfig.on('message_' + self.topic, function(payload){
+          self.send({
+            topic: self.topic,
+            payload: payload
+          })
+        });
 
-      self.brokerConfig.on('connError', function(err){
-        self.status({fill:"red",shape:"dot",text:"error"});
-      });
+        self.brokerConfig.on('connError', function(err){
+          self.status({fill:"red",shape:"dot",text:"error"});
+        });
+      }
+
     }
-
   }
-  mqttInNode.groupName = 'mqtt';
-  PN.nodes.registerType("mqtt in",mqttInNode);
+  MQTTInNode.groupName = 'mqtt';
+  PN.nodes.registerType("mqtt in",MQTTInNode);
 
-  function mqttOutNode(n) {
-    var self = this;
-    PN.nodes.createNode(self,n);
-    self.broker = n.broker;
-    self.brokerConfig = PN.nodes.getNode(self.broker);
-    self.topic = n.topic;
+  class MQTTOutNode extends PN.Node {
+    constructor(n) {
+      super(n)
+      var self = this;
+      self.broker = n.broker;
+      self.brokerConfig = PN.nodes.getNode(self.broker);
+      self.topic = n.topic;
 
-    if (self.brokerConfig) {
+      if (self.brokerConfig) {
 
-      self.status({fill:"yellow",shape:"dot",text:"connecting..."});
+        self.status({fill:"yellow",shape:"dot",text:"connecting..."});
 
-      self.brokerConfig.on('connReady', function(conn){
-        self.status({fill:"green",shape:"dot",text:"connected"});
-      });
+        self.brokerConfig.on('connReady', function(conn){
+          self.status({fill:"green",shape:"dot",text:"connected"});
+        });
 
-      self.on('input',function(msg) {
-        if(self.brokerConfig.conn){
-          var topic = msg.topic || self.topic;
-          if(topic){
-            if (!Buffer.isBuffer(msg.payload)) {
-              if (typeof msg.payload === 'object') {
-                msg.payload = JSON.stringify(msg.payload);
-              } else if (typeof msg.payload !== 'string') {
-                msg.payload = '' + msg.payload;
+        self.on('input',function(msg) {
+          if(self.brokerConfig.conn){
+            var topic = msg.topic || self.topic;
+            if(topic){
+              if (!Buffer.isBuffer(msg.payload)) {
+                if (typeof msg.payload === 'object') {
+                  msg.payload = JSON.stringify(msg.payload);
+                } else if (typeof msg.payload !== 'string') {
+                  msg.payload = '' + msg.payload;
+                }
               }
+
+              var options = {
+                  qos: msg.qos || 0,
+                  retain: msg.retain || false
+              };
+
+              self.brokerConfig.conn.publish(topic, msg.payload, options);
             }
-
-            var options = {
-                qos: msg.qos || 0,
-                retain: msg.retain || false
-            };
-
-            self.brokerConfig.conn.publish(topic, msg.payload, options);
+            else{
+              self.error("must publish on a topic");
+            }
           }
-          else{
-            self.error("must publish on a topic");
-          }
-        }
-      });
+        });
 
-      self.brokerConfig.on('connError', function(err){
-        self.status({fill:"red",shape:"dot",text:"error"});
-      });
+        self.brokerConfig.on('connError', function(err){
+          self.status({fill:"red",shape:"dot",text:"error"});
+        });
 
-    } else {
-      self.error("missing broker configuration");
+      } else {
+        self.error("missing broker configuration");
+      }
     }
   }
-
-  mqttOutNode.groupName = 'mqtt';
-  PN.nodes.registerType("mqtt out",mqttOutNode);
+  MQTTOutNode.groupName = 'mqtt';
+  PN.nodes.registerType("mqtt out",MQTTOutNode);
 
 }
 

@@ -115,26 +115,28 @@ function takeGif(msg, cb){
 
 module.exports = function(PN) {
 
-  function CamerNode(n) {
-    PN.nodes.createNode(this,n);
-    var node = this;
-    node.animated = n.animated;
+  class CameraNode extends PN.Node {
+    constructor(n) {
+      super(n);
+      var node = this;
+      node.animated = n.animated;
 
-    this.on("input",function(msg) {
-      console.log('adding image', msg);
-      if(node.animated){
-        takeGif(msg, function(image){
-          msg.image = image;
-          node.send(msg);
-        });
-      }else{
-        takepicture(function(image){
-          msg.image = image;
-          node.send(msg);
-        });
-      }
+      this.on("input",function(msg) {
+        console.log('adding image', msg);
+        if(node.animated){
+          takeGif(msg, function(image){
+            msg.image = image;
+            node.send(msg);
+          });
+        }else{
+          takepicture(function(image){
+            msg.image = image;
+            node.send(msg);
+          });
+        }
 
-    });
+      });
+    }
   }
 
   PN.nodes.registerType("camera",CamerNode);
