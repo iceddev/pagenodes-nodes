@@ -183,7 +183,7 @@ function createNode(PN) {
     return NodeBotNode;
   }(PN.Node);
 
-  nodebotNode.groupName = 'gpio';
+  NodeBotNode.groupName = 'gpio';
   PN.nodes.registerType("nodebot", NodeBotNode);
 
   PN.events.on('rpc_gpio/listSerial', function (msg) {
@@ -199,7 +199,7 @@ function createNode(PN) {
     });
   });
 
-  return nodebotNode;
+  return NodeBotNode;
 }
 
 module.exports = createNode;

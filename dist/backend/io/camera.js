@@ -148,5 +148,5 @@ module.exports = function (PN) {
     return CameraNode;
   }(PN.Node);
 
-  PN.nodes.registerType("camera", CamerNode);
+  PN.nodes.registerType("camera", CameraNode);
 };

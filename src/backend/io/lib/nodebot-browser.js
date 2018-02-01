@@ -193,7 +193,7 @@ function createNode(PN){
 
     }
   }
-  nodebotNode.groupName = 'gpio';
+  NodeBotNode.groupName = 'gpio';
   PN.nodes.registerType("nodebot", NodeBotNode);
 
 
@@ -210,7 +210,7 @@ function createNode(PN){
     });
   });
 
-  return nodebotNode;
+  return NodeBotNode;
 }
 
 module.exports = createNode;
