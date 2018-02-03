@@ -43,7 +43,7 @@ module.exports = function (RED) {
                 'div',
                 null,
                 React.createElement(TextRow, { name: 'ircserver', icon: 'globe' }),
-                React.createElement(TextRow, { name: 'channel', icon: 'random', placeholder: '#pagenodes' }),
+                React.createElement(TextRow, { name: 'channel', icon: 'random', placeholder: '#chirpers' }),
                 React.createElement(NameRow, null),
                 React.createElement(
                     'div',

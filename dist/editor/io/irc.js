@@ -38,7 +38,7 @@ module.exports = function (RED) {
             $("#node-input-channel").val(this.channel);
         },
         render: function render() {
-            return React.createElement('div', null, React.createElement(TextRow, { name: 'ircserver', icon: 'globe' }), React.createElement(TextRow, { name: 'channel', icon: 'random', placeholder: '#pagenodes' }), React.createElement(NameRow, null), React.createElement('div', { className: 'form-tips' }, React.createElement('span', null, 'The channel to join must start with a # You may join multiple channels by comma separating a list - #chan1,#chan2,etc.')));
+            return React.createElement('div', null, React.createElement(TextRow, { name: 'ircserver', icon: 'globe' }), React.createElement(TextRow, { name: 'channel', icon: 'random', placeholder: '#chirpers' }), React.createElement(NameRow, null), React.createElement('div', { className: 'form-tips' }, React.createElement('span', null, 'The channel to join must start with a # You may join multiple channels by comma separating a list - #chan1,#chan2,etc.')));
         },
         renderHelp: function renderHelp() {
             return React.createElement('div', null, 'Connects to a channel on an IRC server.');

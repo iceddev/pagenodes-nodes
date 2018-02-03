@@ -13,7 +13,25 @@ module.exports = function(PN){
     },
     labelStyle: function() {
       return "node_label_unknown";
-    }
+    },
+    render: () => {
+      return (
+        <div>
+          <div className="form-tips">
+            This node is a type unknown to your Chirpers runtime.  You may wish to remove this node from your flow, or try running this flow on a different runtime.
+          </div>
+        </div>
+      )
+    },
+    renderHelp: () => {
+      return (
+        <div>
+          <p>
+            This node is a type unknown to your Chirpers runtime.
+          </p>
+        </div>
+      )
+    },
+    renderDescription: () => <div class="form-tips">unknown</div>
   });
 };
-

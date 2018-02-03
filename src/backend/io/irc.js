@@ -338,7 +338,7 @@ module.exports = function (RED) {
                           node.ircclient.say(ch[c], JSON.stringify(msg));
                       } else {
                           // send just the payload to each channel
-                          if (_typeof(msg.payload) === "object") {
+                          if (typeof msg.payload === "object") {
                               msg.payload = JSON.stringify(msg.payload);
                           }
                           node.ircclient.say(ch[c], msg.payload);

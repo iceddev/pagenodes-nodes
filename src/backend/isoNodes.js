@@ -23,6 +23,7 @@ const isoNodes = [
   require("./io/split"),
   require("./io/join"),
   require("./parsers/XML"),
+  require("./core/unknown"),
 ];
 
 module.exports = isoNodes;
