@@ -1,5 +1,6 @@
 const noble = require('noble/with-bindings')(require('noble/lib/webbluetooth/bindings'));
 const EventEmitter = require("events").EventEmitter;
+const { padStart } = require('lodash');
 
 
 noble.on('error', function(err){
@@ -21,6 +22,12 @@ const api = {
 };
 
 function compareUUIDs(a, b){
+  if(typeof a === 'number') {
+    a = padStart(Number(a).toString(16), 4, '0');
+  }
+  if(typeof b === 'number') {
+    b = padStart(Number(b).toString(16), 4, '0');
+  }
   a = a || '';
   b = b || '';
   a = a.toLowerCase().replace(/\-/g, '');
