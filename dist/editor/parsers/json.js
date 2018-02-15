@@ -6,7 +6,10 @@ module.exports = function (PN) {
     color: "#DEBD5C",
     defaults: {
       name: { value: "" },
-      propName: { value: "payload", required: true }
+      payload: { value: "payload", required: false },
+      result: { value: "payload", required: false },
+      payloadType: { value: "msg", required: false },
+      resultType: { value: "msg", required: false }
     },
     inputs: 1,
     outputs: 1,
@@ -14,22 +17,22 @@ module.exports = function (PN) {
     label: function label() {
       return this.name || "json";
     },
+    oneditprepare: function oneditprepare() {
+      PN.util.setupTypedPayload(this, ['msg', 'flow']);
+      PN.util.setupTypedResult(this);
+    },
     render: function render() {
+      var _PN$components = PN.components,
+          NameRow = _PN$components.NameRow,
+          PayloadRow = _PN$components.PayloadRow,
+          ResultRow = _PN$components.ResultRow;
+
       return React.createElement(
         'div',
         null,
-        React.createElement(
-          'div',
-          { className: 'form-row' },
-          React.createElement(
-            'label',
-            { htmlFor: 'node-input-propName' },
-            React.createElement('i', { className: 'fa fa-circle' }),
-            ' Property'
-          ),
-          'msg.',
-          React.createElement('input', { type: 'text', style: { width: "208px" }, id: 'node-input-propName', placeholder: 'payload' })
-        )
+        React.createElement(PayloadRow, null),
+        React.createElement(ResultRow, null),
+        React.createElement(NameRow, null)
       );
     },
     renderHelp: function renderHelp() {

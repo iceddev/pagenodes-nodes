@@ -16,10 +16,10 @@ module.exports = function(PN){
           param2Type: {value:"str", required: false},
           param3Type: {value:"str", required: false},
           param4Type: {value:"str", requried: false},
-          payloadProp: {value:"payload", required:false},
-          resultProp: {value:"payload", required:false},
-          payloadPropType: {value:"msg", required:false},
-          resultPropType: {value:"msg", required:false}
+          payload: {value:"payload", required:false},
+          result: {value:"payload", required:false},
+          payloadType: {value:"msg", required:false},
+          resultType: {value:"msg", required:false}
         },
         inputs:1,   // set the number of inputs - only 0 or 1
         outputs:1,  // set the number of outputs - 0 to n
@@ -34,8 +34,8 @@ module.exports = function(PN){
         oneditprepare: function() {
           var myFuncDef = arrayFunctions[this.func];
 
-          PN.util.setupTypedText({name: 'payloadProp', node: this, types: ['msg','flow','str','num','bool','json']});
-          PN.util.setupTypedText({name: 'resultProp', node: this, types: ['msg','flow']});
+          PN.util.setupTypedPayload(this);
+          PN.util.setupTypedResult(this);
           PN.util.setupTypedText({name: 'param2', node: this, types: ['str','num','bool','json','msg','flow']});
           PN.util.setupTypedText({name: 'param3', node: this, types: ['str','num','bool','json','msg','flow']});
           PN.util.setupTypedText({name: 'param4', node: this, types: ['str','num','bool','json','msg','flow']});
@@ -83,12 +83,12 @@ module.exports = function(PN){
         },
 
         render: function (){
-          const {NameRow, TextRow, TypeTextRow, SelectRow} = PN.components;
+          const {NameRow, TypeTextRow, SelectRow, PayloadRow, ResultRow} = PN.components;
           const funcNames = _.keys(arrayFunctions).sort();
           return (
             <div>
 
-              <TypeTextRow name="payloadProp" label="input" icon="arrow-down"/>
+              <PayloadRow/>
 
               <SelectRow name="func" icon="gears" options={funcNames} />
 
@@ -98,7 +98,7 @@ module.exports = function(PN){
 
               <TypeTextRow name="param4" icon="crosshairs"/>
 
-              <TypeTextRow name="resultProp" label="output" icon="arrow-up"/>
+              <ResultRow/>
 
               <NameRow/>
 
@@ -112,8 +112,8 @@ module.exports = function(PN){
             <div>
               <p>Provides <i><a href="https://lodash.com/docs#chunk" target="_new">Lodash</a></i> array
               functions that use <code>msg.payload</code> as the first parameter.</p>
-              <p>Other paramters beyond the first can be input in this node's configuration.</p>
-              <p>You may also attach <code>msg.param2</code>, <code>msg.param3</code>, and/or <code>msg.param4</code> and/or <code>msg.func</code> to override this node's configuration.</p>
+              <p>{`Other paramters beyond the first can be input in this node's configuration.`}</p>
+              <p>You may also attach <code>msg.param2</code>, <code>msg.param3</code>, and/or <code>msg.param4</code> and/or <code>msg.func</code> {`to override this node's configuration.`}</p>
             </div>
           )
         },

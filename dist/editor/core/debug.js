@@ -25,6 +25,7 @@ module.exports = function (PN) {
   }
 
   PN.nodes.registerType('debug', {
+    order: 1,
     category: 'output',
     defaults: {
       name: { value: "" },

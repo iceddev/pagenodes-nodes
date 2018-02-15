@@ -6,7 +6,9 @@ module.exports = function (PN) {
     color: "rgb(174, 174, 231)",
     defaults: {
       name: { value: "" },
-      animated: { value: false }
+      animated: { value: false },
+      result: { value: "image", required: false },
+      resultType: { value: "msg", required: false }
     },
     inputs: 1,
     outputs: 1,
@@ -14,12 +16,13 @@ module.exports = function (PN) {
     label: function label() {
       return this.name || 'camera';
     },
-    labelStyle: function labelStyle() {
-      return this.name ? "node_label_italic" : "";
+    oneditprepare: function oneditprepare() {
+      PN.util.setupTypedResult(this);
     },
-    oneditprepare: function oneditprepare() {},
     render: function render() {
-      var NameRow = PN.components.NameRow;
+      var _PN$components = PN.components,
+          NameRow = _PN$components.NameRow,
+          ResultRow = _PN$components.ResultRow;
 
       return React.createElement(
         'div',
@@ -49,6 +52,7 @@ module.exports = function (PN) {
             ' Gif'
           )
         ),
+        React.createElement(ResultRow, null),
         React.createElement(NameRow, null)
       );
     },

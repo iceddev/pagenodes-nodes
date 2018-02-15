@@ -15,9 +15,6 @@ module.exports = function (PN) {
     label: function label() {
       return this.name || 'geolocate';
     },
-    labelStyle: function labelStyle() {
-      return this.name ? "node_label_italic" : "";
-    },
     render: function render() {
       var NameRow = PN.components.NameRow;
 

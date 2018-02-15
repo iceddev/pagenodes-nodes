@@ -15,9 +15,6 @@ module.exports = function(PN){
     label: function() {
       return this.name||'gamepad';
     },
-    labelStyle: function() {
-      return this.name?"node_label_italic":"";
-    },
     render: function () {
       const {NameRow, TextRow, SelectRow} = PN.components;
       return (
@@ -58,10 +55,6 @@ module.exports = function(PN){
           </div>
 
           <NameRow/>
-
-          <div className="form-tips" id="tip-json" hidden>
-            <span data-i18n="httpin.tip.req" />
-          </div>
 
         </div>
       )

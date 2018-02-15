@@ -17,26 +17,33 @@ module.exports = function (PN) {
 
       var node = _this;
       node.encoding = n.encoding;
-      node.propName = n.propName || "payload";
+
       _this.on("input", function (msg) {
-        if (msg.hasOwnProperty(node.propName)) {
+        var inputVal = node.getPayloadValue(msg);
+        if (inputVal) {
           var encoder = node.encoding;
           // Use user set encoding property on message if available
           if (msg.hasOwnProperty("encoding")) {
             encoder = msg.encoding;
           }
 
-          if (Buffer.isBuffer(msg[node.propName])) {
-            msg[node.propName] = new Buffer(msg[node.propName]).toString(encoder);
-            // console.log('is buffer', msg[node.propName], encoder);
-          } else if (Array.isArray(msg[node.propName])) {
-            msg[node.propName] = new Buffer(msg[node.propName]);
+          if (Buffer.isBuffer(inputVal)) {
+            node.setResult(msg, new Buffer(inputVal).toString(encoder));
+          } else if (Array.isArray(inputVal)) {
+            node.setResult(msg, new Buffer(inputVal));
           } else {
             // The string must be turned into a Buffer
             // with default or specified encoding
-            // Preform selected operation:
-            msg[node.propName] = new Buffer(String(msg[node.propName]), encoder);
-            // console.log('bufferResult', bufferResult);
+            var data = String(inputVal);
+            if (encoder === 'dataUrl') {
+              try {
+                data = data.split(';')[1].split(',')[1];
+                encoder = 'base64';
+              } catch (exp) {
+                console.log('error parsing dataUrl', exp);
+              }
+            }
+            node.setResult(msg, new Buffer(data, encoder));
           }
         }
         node.send(msg);

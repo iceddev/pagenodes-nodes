@@ -10,17 +10,17 @@ module.exports = function(PN) {
           this.attrkey = n.attr;
           this.charkey = n.chr;
           var node = this;
-          node.propName = n.propName || "payload";
           this.on("input", function(msg) {
-            if (msg.hasOwnProperty(node.propName)) {
-                  if (typeof msg[node.propName] === "object") {
+            const value = node.getPayloadValue(msg);
+            if (value) {
+                  if (typeof value === "object") {
                       var options = {};
                       if (msg.hasOwnProperty("options") && typeof msg.options === "object") { options = msg.options; }
                       options.async = false;
-                      msg[node.propName] = builder.buildObject(msg[node.propName], options);
+                      node.setResult(msg, builder.buildObject(msg[node.propName], options));
                       node.send(msg);
                   }
-                  else if (typeof msg[node.propName] === "string") {
+                  else if (typeof value === "string") {
                       var options = {};
                       if (msg.hasOwnProperty("options") && typeof msg.options === "object") { options = msg.options; }
                       options.async = true;
@@ -29,7 +29,7 @@ module.exports = function(PN) {
                       parseString(msg[node.propName], options, function (err, result) {
                           if (err) { node.error(err, msg); }
                           else {
-                              msg[node.propName] = result;
+                              node.setResult(msg, resutl);
                               node.send(msg);
                           }
                       });

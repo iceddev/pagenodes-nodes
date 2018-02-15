@@ -12,10 +12,6 @@ var util = require("util");
 module.exports = function (PN) {
 
   var _ = require("lodash");
-  var DEFAULT_RESULT = 'payload';
-  var DEFAULT_INPUT = 'payload';
-  var DEFAULT_INPUT_TYPE = 'msg';
-  var DEFAULT_OUTPUT_TYPE = 'msg';
 
   function parametersExpected(inputMap, funct) {
     var number = inputMap[funct].params.length + 1;
@@ -38,10 +34,6 @@ module.exports = function (PN) {
       node.param2Type = n.param2Type;
       node.param3Type = n.param3Type;
       node.param4Type = n.param4Type;
-      node.resultProp = n.resultProp || DEFAULT_RESULT;
-      node.payloadProp = n.payloadProp || DEFAULT_INPUT;
-      node.payloadPropType = n.payloadPropType || DEFAULT_INPUT_TYPE;
-      node.resultPropType = n.resultPropType || 'msg';
 
       node.on("input", function (msg) {
         var func = node.func;
@@ -59,7 +51,7 @@ module.exports = function (PN) {
 
         var lodashFunc = _[func];
         if (lodashFunc) {
-          var msgInput = PN.util.evaluateNodeProperty(payloadProp, payloadPropType, node, msg);
+          var msgInput = node.getInputValue('payloadProp', msg);
           var numberOfParameters = parametersExpected(arrayFunctions, func);
 
           // Use any user set outside-of-node prefernces
@@ -68,19 +60,19 @@ module.exports = function (PN) {
           if (msg.hasOwnProperty('param2')) {
             param2 = msg.param2;
           } else {
-            param2 = PN.util.evaluateNodeProperty(node.param2, node.param2Type, node, msg);
+            param2 = node.getInputValue('param2', msg);
           }
 
           if (msg.hasOwnProperty('param3')) {
             param3 = msg.param3;
           } else {
-            param3 = PN.util.evaluateNodeProperty(node.param3, node.param3Type, node, msg);
+            param3 = node.getInputValue('param3', msg);
           }
 
           if (msg.hasOwnProperty('param4')) {
             param4 = msg.param4;
           } else {
-            param4 = PN.util.evaluateNodeProperty(node.param4, node.param4Type, node, msg);
+            param4 = node.getInputValue('param4', msg);
           }
 
           console.log('msgInput', msgInput, 'param2', param2, 'param3', param3);

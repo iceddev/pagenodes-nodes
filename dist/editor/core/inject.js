@@ -5,6 +5,7 @@ var _require = require('lodash'),
 
 module.exports = function (PN) {
     PN.nodes.registerType('inject', {
+        order: 1,
         category: 'input',
         color: "#a6bbcf",
         defaults: {

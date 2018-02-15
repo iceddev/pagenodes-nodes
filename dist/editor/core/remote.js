@@ -2,6 +2,7 @@
 
 module.exports = function (PN) {
   PN.nodes.registerType('iot buttons', {
+    order: 2,
     category: 'input',
     color: "#a6bbcf",
     defaults: {},
@@ -93,6 +94,7 @@ module.exports = function (PN) {
   });
 
   PN.nodes.registerType('iot sliders', {
+    order: 3,
     category: 'input',
     color: "#a6bbcf",
     defaults: {},

@@ -13,9 +13,6 @@ module.exports = function(PN){
     label: function() {
       return this.name||'geolocate';
     },
-    labelStyle: function() {
-      return this.name?"node_label_italic":"";
-    },
     render: function () {
       const {NameRow} = PN.components;
       return (
@@ -37,4 +34,3 @@ module.exports = function(PN){
     renderDescription: () => <p>Returns the geolocation of your current device</p>
   });
 };
-

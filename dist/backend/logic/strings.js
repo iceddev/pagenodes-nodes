@@ -14,11 +14,6 @@ var _ = require('lodash');
 addCustomFunctions(_);
 
 module.exports = function (PN) {
-
-  var DEFAULT_RESULT = 'payload';
-  var DEFAULT_INPUT = 'payload';
-  var DEFAULT_INPUT_TYPE = 'msg';
-
   var StringsNode = function (_PN$Node) {
     _inherits(StringsNode, _PN$Node);
 
@@ -33,17 +28,13 @@ module.exports = function (PN) {
       node.param3 = n.param3;
       node.param2Type = n.param2Type;
       node.param3Type = n.param3Type;
-      node.resultProp = n.resultProp || DEFAULT_RESULT;
-      node.resultPropType = n.resultPropType || DEFAULT_INPUT_TYPE;
-      node.payloadProp = n.payloadProp || DEFAULT_INPUT;
-      node.payloadPropType = n.payloadPropType || DEFAULT_INPUT_TYPE;
 
       _this.on("input", function (msg) {
         var func = node.func;
         var param2, param3;
         var resultProp = node.resultProp;
 
-        var msgInput = PN.util.evaluateNodeProperty(node.payloadProp, node.payloadPropType, node, msg);
+        var msgInput = node.getPayloadValue(msg);
 
         // Use any user set outside-of-node prefernces
         // Design Note: Properties attached to message should
@@ -51,13 +42,13 @@ module.exports = function (PN) {
         if (msg.hasOwnProperty('param2')) {
           param2 = msg.param2;
         } else if (node.param2) {
-          param2 = PN.util.evaluateNodeProperty(node.param2, node.param2Type, node, msg);
+          param2 = node.getInputValue('param2', msg);
         }
 
         if (msg.hasOwnProperty('param3')) {
           param3 = msg.param3;
         } else if (node.param3) {
-          param3 = PN.util.evaluateNodeProperty(node.param3, node.param3Type, node, msg);
+          param3 = node.getInputValue('param3', msg);
         }
 
         if (msg.hasOwnProperty('func')) {

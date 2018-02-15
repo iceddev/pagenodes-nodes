@@ -120,17 +120,18 @@ module.exports = function(PN) {
       super(n);
       var node = this;
       node.animated = n.animated;
+      node.resultProp = n.resultProp || 'image';
 
       this.on("input",function(msg) {
         console.log('adding image', msg);
         if(node.animated){
           takeGif(msg, function(image){
-            msg.image = image;
+            node.setResult(msg, image);
             node.send(msg);
           });
         }else{
           takepicture(function(image){
-            msg.image = image;
+            node.setResult(msg, image);
             node.send(msg);
           });
         }

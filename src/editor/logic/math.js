@@ -8,10 +8,10 @@ module.exports = function(PN){
       operator: {value:"+", required:true},
       operand: {value:"", required:false},
       operandType: {value:"num", required:false},
-      payloadProp: {value:"payload", required:false},
-      resultProp: {value:"payload", required:false},
-      payloadPropType: {value:"msg", required:false},
-      resultPropType: {value:"msg", required:false}
+      payload: {value:"payload", required:false},
+      result: {value:"payload", required:false},
+      payloadType: {value:"msg", required:false},
+      resultType: {value:"msg", required:false}
     },
     inputs:1,   // set the number of inputs - only 0 or 1
     outputs:1,  // set the number of outputs - 0 to n
@@ -20,12 +20,12 @@ module.exports = function(PN){
       return this.name|| this.operator + ' ' + (this.operand || '');
     },
     oneditprepare: function() {
-      PN.util.setupTypedText({name: 'payloadProp', node: this, types: ['msg','flow','num','str']});
-      PN.util.setupTypedText({name: 'resultProp', node: this, types: ['msg','flow']});
+      PN.util.setupTypedText({name: 'payload', node: this, types: ['msg','flow','num','str']});
+      PN.util.setupTypedText({name: 'result', node: this, types: ['msg','flow']});
       PN.util.setupTypedText({name: 'operand', node: this, types: ['num','msg','flow','str']});
     },
     render: function (){
-      const {NameRow, TextRow, TypeTextRow, SelectRow} = PN.components;
+      const {NameRow, TypeTextRow, SelectRow, ResultRow} = PN.components;
       return (
         <div>
           <div className="form-row">
@@ -84,11 +84,11 @@ module.exports = function(PN){
             </select>
           </div>
 
-          <TypeTextRow name="payloadProp" label="x" icon="cogs"/>
+          <TypeTextRow name="payload" label="x" icon="cogs"/>
 
           <TypeTextRow name="operand" label="y" icon="cogs" placeholder="Enter a number, 'pi', or 'e'"/>
 
-          <TypeTextRow name="resultProp" label="output" icon="arrow-up"/>
+          <ResultRow/>
 
           <NameRow/>
 

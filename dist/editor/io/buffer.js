@@ -7,7 +7,10 @@ module.exports = function (PN) {
     color: "#DEBD5C", //light red
     defaults: { // defines the editable properties of the node
       name: { value: "" }, //  along with default values.
-      propName: { value: "payload", required: true },
+      payload: { value: "payload", required: false },
+      result: { value: "payload", required: false },
+      payloadType: { value: "msg", required: false },
+      resultType: { value: "msg", required: false },
       encoding: { value: "utf8", required: true }
     },
     inputs: 1, // set the number of inputs - only 0 or 1
@@ -17,83 +20,24 @@ module.exports = function (PN) {
       // sets the default label contents
       return 'buffer';
     },
+    oneditprepare: function oneditprepare() {
+      PN.util.setupTypedPayload(this, ['msg', 'flow']);
+      PN.util.setupTypedResult(this);
+    },
     render: function render() {
+      var _PN$components = PN.components,
+          NameRow = _PN$components.NameRow,
+          SelectRow = _PN$components.SelectRow,
+          PayloadRow = _PN$components.PayloadRow,
+          ResultRow = _PN$components.ResultRow;
+
       return React.createElement(
         'div',
         null,
-        React.createElement(
-          'div',
-          { className: 'form-row' },
-          React.createElement(
-            'label',
-            { htmlFor: 'node-input-propName' },
-            React.createElement('i', { className: 'fa fa-circle' }),
-            ' Property'
-          ),
-          'msg.',
-          React.createElement('input', { type: 'text', style: { width: "208px" }, id: 'node-input-propName', placeholder: 'payload' })
-        ),
-        React.createElement(
-          'div',
-          { className: 'form-row' },
-          React.createElement(
-            'label',
-            { htmlFor: 'node-input-encoding' },
-            React.createElement('i', { className: 'fa fa-tasks' }),
-            ' ',
-            React.createElement(
-              'span',
-              null,
-              'Encoding'
-            )
-          ),
-          React.createElement(
-            'select',
-            { id: 'node-input-encoding' },
-            '// String encoding options',
-            React.createElement(
-              'option',
-              { value: 'ascii' },
-              'ascii'
-            ),
-            React.createElement(
-              'option',
-              { value: 'utf8' },
-              'UTF-8 (default)'
-            ),
-            React.createElement(
-              'option',
-              { value: 'utf16le' },
-              'UTF-16 LE (UCS-2)'
-            ),
-            React.createElement(
-              'option',
-              { value: 'base64' },
-              'base64'
-            ),
-            React.createElement(
-              'option',
-              { value: 'hex' },
-              'hex'
-            )
-          )
-        ),
-        React.createElement(
-          'div',
-          { className: 'form-row' },
-          React.createElement(
-            'label',
-            { htmlFor: 'node-input-name' },
-            React.createElement('i', { className: 'fa fa-tag' }),
-            ' ',
-            React.createElement(
-              'span',
-              null,
-              'Name'
-            )
-          ),
-          React.createElement('input', { type: 'text', id: 'node-input-name' })
-        )
+        React.createElement(PayloadRow, null),
+        React.createElement(SelectRow, { name: 'encoding', icon: 'tasks', options: ['ascii', 'utf8', 'utf16le', 'base64', 'hex', 'dataUrl'] }),
+        React.createElement(ResultRow, null),
+        React.createElement(NameRow, null)
       );
     },
     renderHelp: function renderHelp() {

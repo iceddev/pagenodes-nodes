@@ -5,7 +5,10 @@ module.exports = function(PN){
     color:"#DEBD5C", //light red
     defaults: {             // defines the editable properties of the node
       name: {value:""},   //  along with default values.
-      propName:{value:"payload", required:true},
+      payload: {value:"payload", required:false},
+      result: {value:"payload", required:false},
+      payloadType: {value:"msg", required:false},
+      resultType: {value:"msg", required:false},
       encoding: {value:"utf8", required:true},
     },
     inputs:1,   // set the number of inputs - only 0 or 1
@@ -14,32 +17,23 @@ module.exports = function(PN){
     label: function() {  // sets the default label contents
       return 'buffer';
     },
+    oneditprepare: function() {
+      PN.util.setupTypedPayload(this,['msg','flow']);
+      PN.util.setupTypedResult(this);
+    },
     render: function (){
+      const {NameRow, SelectRow, PayloadRow, ResultRow} = PN.components;
       return (
         <div>
 
-          <div className="form-row">
-            <label htmlFor="node-input-propName">
-              <i className="fa fa-circle" /> Property
-            </label>
-            msg.<input type="text" style={{ width: "208px" }} id="node-input-propName" placeholder="payload" />
-          </div>
-          <div className="form-row">
-            <label htmlFor="node-input-encoding"><i className="fa fa-tasks"></i> <span>Encoding</span></label>
-            <select id="node-input-encoding">
-              // String encoding options
-              <option value="ascii">ascii</option>
-              <option value="utf8">UTF-8 (default)</option>
-              <option value="utf16le">UTF-16 LE (UCS-2)</option>
-              <option value="base64">base64</option>
-              <option value="hex">hex</option>
-            </select>
-          </div>
+          <PayloadRow/>
 
-          <div className="form-row">
-            <label htmlFor="node-input-name"><i className="fa fa-tag"></i> <span>Name</span></label>
-            <input type="text" id="node-input-name"></input>
-          </div>
+          <SelectRow name="encoding" icon="tasks" options={['ascii', 'utf8', 'utf16le', 'base64', 'hex', 'dataUrl']} />
+
+          <ResultRow/>
+
+          <NameRow/>
+          
         </div>
       )
     },
@@ -61,4 +55,3 @@ module.exports = function(PN){
 
 
 };
-

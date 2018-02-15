@@ -4,7 +4,10 @@ module.exports = function(PN){
     color:"#DEBD5C",
     defaults: {
       name: {value:""},
-      propName:{value:"payload", required:true}
+      payload: {value:"payload", required:false},
+      result: {value:"payload", required:false},
+      payloadType: {value:"msg", required:false},
+      resultType: {value:"msg", required:false}
     },
     inputs:1,
     outputs:1,
@@ -12,17 +15,17 @@ module.exports = function(PN){
     label: function() {
       return this.name||"json";
     },
+    oneditprepare: function() {
+      PN.util.setupTypedPayload(this, ['msg','flow']);
+      PN.util.setupTypedResult(this);
+    },
     render: function () {
+      const {NameRow, PayloadRow, ResultRow} = PN.components;
       return (
         <div>
-
-          <div className="form-row">
-            <label htmlFor="node-input-propName">
-              <i className="fa fa-circle" /> Property
-            </label>
-            msg.<input type="text" style={{ width: "208px" }} id="node-input-propName" placeholder="payload" />
-          </div>
-
+          <PayloadRow/>
+          <ResultRow/>
+          <NameRow/>
         </div>
       )
     },
@@ -39,4 +42,3 @@ module.exports = function(PN){
     renderDescription: () => <p>Parses/Stringifies JSON</p>
   });
 };
-

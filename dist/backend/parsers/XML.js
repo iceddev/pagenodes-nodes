@@ -24,18 +24,18 @@ module.exports = function (PN) {
             _this.attrkey = n.attr;
             _this.charkey = n.chr;
             var node = _this;
-            node.propName = n.propName || "payload";
             _this.on("input", function (msg) {
-                if (msg.hasOwnProperty(node.propName)) {
-                    if (_typeof(msg[node.propName]) === "object") {
+                var value = node.getPayloadValue(msg);
+                if (value) {
+                    if ((typeof value === "undefined" ? "undefined" : _typeof(value)) === "object") {
                         var options = {};
                         if (msg.hasOwnProperty("options") && _typeof(msg.options) === "object") {
                             options = msg.options;
                         }
                         options.async = false;
-                        msg[node.propName] = builder.buildObject(msg[node.propName], options);
+                        node.setResult(msg, builder.buildObject(msg[node.propName], options));
                         node.send(msg);
-                    } else if (typeof msg[node.propName] === "string") {
+                    } else if (typeof value === "string") {
                         var options = {};
                         if (msg.hasOwnProperty("options") && _typeof(msg.options) === "object") {
                             options = msg.options;
@@ -47,7 +47,7 @@ module.exports = function (PN) {
                             if (err) {
                                 node.error(err, msg);
                             } else {
-                                msg[node.propName] = result;
+                                node.setResult(msg, resutl);
                                 node.send(msg);
                             }
                         });

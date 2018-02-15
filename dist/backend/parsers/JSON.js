@@ -18,20 +18,20 @@ module.exports = function (PN) {
       var _this = _possibleConstructorReturn(this, (JSONNode.__proto__ || Object.getPrototypeOf(JSONNode)).call(this, n));
 
       var node = _this;
-      node.propName = n.propName || 'payload';
       _this.on("input", function (msg) {
-        if (msg.hasOwnProperty(node.propName)) {
-          if (typeof msg[node.propName] === "string") {
+        var value = node.getPayloadValue(msg);
+        if (value) {
+          if (typeof value === "string") {
             try {
-              msg[node.propName] = JSON.parse(msg[node.propName]);
+              node.setResult(msg, JSON.parse(msg[node.propName]));
               node.send(msg);
             } catch (e) {
               node.error(e.message, msg);
             }
-          } else if (_typeof(msg[node.propName]) === "object" || Array.isArray(msg[node.propName])) {
-            if (!Buffer.isBuffer(msg[node.propName])) {
+          } else if ((typeof value === "undefined" ? "undefined" : _typeof(value)) === "object" || Array.isArray(value)) {
+            if (!Buffer.isBuffer(value)) {
               try {
-                msg[node.propName] = JSON.stringify(msg[node.propName]);
+                node.setResult(msg, JSON.stringify(msg[node.propName]));
                 return node.send(msg);
               } catch (e) {
                 node.error(e);

@@ -98,7 +98,7 @@ module.exports = function (PN) {
             _this.on('input', function (msg) {
                 var onward = [];
                 try {
-                    var prop = PN.util.evaluateNodeProperty(node.property, node.propertyType, node, msg);
+                    var prop = node.getInputValue('property', msg);
                     var elseflag = true;
                     for (var i = 0; i < node.rules.length; i += 1) {
                         var rule = node.rules[i];
@@ -107,13 +107,13 @@ module.exports = function (PN) {
                         if (rule.vt === 'prev') {
                             v1 = node.previousValue;
                         } else {
-                            v1 = PN.util.evaluateNodeProperty(rule.v, rule.vt, node, msg);
+                            v1 = node.evaluatePropVal(rule.v, rule.vt, msg);
                         }
                         v2 = rule.v2;
                         if (rule.v2t === 'prev') {
                             v2 = node.previousValue;
                         } else if (typeof v2 !== 'undefined') {
-                            v2 = PN.util.evaluateNodeProperty(rule.v2, rule.v2t, node, msg);
+                            v2 = node.evaluatePropVal(rule.v2, rule.v2t, msg);
                         }
                         if (rule.t == "else") {
                             test = elseflag;elseflag = true;

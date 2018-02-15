@@ -17,9 +17,6 @@ module.exports = function (PN) {
     label: function label() {
       return this.name || 'gamepad';
     },
-    labelStyle: function labelStyle() {
-      return this.name ? "node_label_italic" : "";
-    },
     render: function render() {
       var _PN$components = PN.components,
           NameRow = _PN$components.NameRow,
@@ -73,12 +70,7 @@ module.exports = function (PN) {
             '\xA0 Only emit on button changes.'
           )
         ),
-        React.createElement(NameRow, null),
-        React.createElement(
-          'div',
-          { className: 'form-tips', id: 'tip-json', hidden: true },
-          React.createElement('span', { 'data-i18n': 'httpin.tip.req' })
-        )
+        React.createElement(NameRow, null)
       );
     },
     renderHelp: function renderHelp() {

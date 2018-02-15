@@ -56,7 +56,7 @@ module.exports = function (RED) {
         this.channel = n.channel || this.serverConfig.channel;
         var node = this;
         if (node.serverConfig.ircclient === null) {
-            node.log(RED._("irc.errors.connect") + ": " + node.serverConfig.server + " " + node.serverConfig.username + " " + node.serverConfig.ssl);
+            // node.log(RED._("irc.errors.connect") + ": " + node.serverConfig.server + " " + node.serverConfig.username + " " + node.serverConfig.ssl);
             node.status({ fill: "grey", shape: "dot", text: "node-red:common.status.connecting" });
             var options = { autoConnect: true, autoRejoin: false, floodProtection: true, secure: node.serverConfig.ssl, selfSigned: node.serverConfig.cert, port: node.serverConfig.port, retryDelay: 20000 };
             if (node.serverConfig.username !== null) {
@@ -87,10 +87,10 @@ module.exports = function (RED) {
             });
             node.serverConfig.ircclient.addListener('registered', function (message) {
                 node.serverConfig.lastseen = Date.now();
-                node.log(node.serverConfig.ircclient.nick + " " + RED._("irc.errors.online") + ": " + message.server);
+                // node.log(node.serverConfig.ircclient.nick + " " + RED._("irc.errors.online") + ": " + message.server);
                 node.status({ fill: "yellow", shape: "dot", text: "node-red:common.status.connected" });
                 node.serverConfig.ircclient.join(node.channel, function (data) {
-                    node.log(data + " " + RED._("irc.errors.joined") + ": " + node.channel);
+                    // node.log(data + " " + RED._("irc.errors.joined") + ": " + node.channel);
                     node.status({ fill: "green", shape: "dot", text: "node-red:common.status.joined" });
                 });
             });
@@ -226,7 +226,7 @@ module.exports = function (RED) {
           this.channel = n.channel || this.serverConfig.channel;
           var node = this;
           if (node.serverConfig.ircclient === null) {
-              node.log(RED._("irc.errors.connect") + ": " + node.serverConfig.server);
+              // node.log(RED._("irc.errors.connect") + ": " + node.serverConfig.server);
               node.status({ fill: "grey", shape: "dot", text: "node-red:common.status.connecting" });
               var options = { autoConnect: true, autoRejoin: false, floodProtection: true, secure: node.serverConfig.ssl, selfSigned: node.serverConfig.cert, port: node.serverConfig.port, retryDelay: 20000 };
               if (node.serverConfig.username !== null) {
@@ -257,10 +257,10 @@ module.exports = function (RED) {
               });
               node.serverConfig.ircclient.addListener('registered', function (message) {
                   node.serverConfig.lastseen = Date.now();
-                  node.log(node.serverConfig.ircclient.nick + " " + RED._("irc.errors.online") + ": " + message.server);
+                  // node.log(node.serverConfig.ircclient.nick + " " + RED._("irc.errors.online") + ": " + message.server);
                   node.status({ fill: "yellow", shape: "dot", text: "node-red:common.status.connected" });
                   node.serverConfig.ircclient.join(node.channel, function (data) {
-                      node.log(data + " " + RED._("irc.errors.joined") + ": " + node.channel);
+                      // node.log(data + " " + RED._("irc.errors.joined") + ": " + node.channel);
                       node.status({ fill: "green", shape: "dot", text: "node-red:common.status.joined" });
                   });
               });

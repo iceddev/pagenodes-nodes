@@ -18,10 +18,10 @@ module.exports = function (PN) {
       param2Type: { value: "str", required: false },
       param3Type: { value: "str", required: false },
       param4Type: { value: "str", requried: false },
-      payloadProp: { value: "payload", required: false },
-      resultProp: { value: "payload", required: false },
-      payloadPropType: { value: "msg", required: false },
-      resultPropType: { value: "msg", required: false }
+      payload: { value: "payload", required: false },
+      result: { value: "payload", required: false },
+      payloadType: { value: "msg", required: false },
+      resultType: { value: "msg", required: false }
     },
     inputs: 1, // set the number of inputs - only 0 or 1
     outputs: 1, // set the number of outputs - 0 to n
@@ -36,8 +36,8 @@ module.exports = function (PN) {
     oneditprepare: function oneditprepare() {
       var myFuncDef = arrayFunctions[this.func];
 
-      PN.util.setupTypedText({ name: 'payloadProp', node: this, types: ['msg', 'flow', 'str', 'num', 'bool', 'json'] });
-      PN.util.setupTypedText({ name: 'resultProp', node: this, types: ['msg', 'flow'] });
+      PN.util.setupTypedPayload(this);
+      PN.util.setupTypedResult(this);
       PN.util.setupTypedText({ name: 'param2', node: this, types: ['str', 'num', 'bool', 'json', 'msg', 'flow'] });
       PN.util.setupTypedText({ name: 'param3', node: this, types: ['str', 'num', 'bool', 'json', 'msg', 'flow'] });
       PN.util.setupTypedText({ name: 'param4', node: this, types: ['str', 'num', 'bool', 'json', 'msg', 'flow'] });
@@ -87,20 +87,21 @@ module.exports = function (PN) {
     render: function render() {
       var _PN$components = PN.components,
           NameRow = _PN$components.NameRow,
-          TextRow = _PN$components.TextRow,
           TypeTextRow = _PN$components.TypeTextRow,
-          SelectRow = _PN$components.SelectRow;
+          SelectRow = _PN$components.SelectRow,
+          PayloadRow = _PN$components.PayloadRow,
+          ResultRow = _PN$components.ResultRow;
 
       var funcNames = _.keys(arrayFunctions).sort();
       return React.createElement(
         'div',
         null,
-        React.createElement(TypeTextRow, { name: 'payloadProp', label: 'input', icon: 'arrow-down' }),
+        React.createElement(PayloadRow, null),
         React.createElement(SelectRow, { name: 'func', icon: 'gears', options: funcNames }),
         React.createElement(TypeTextRow, { name: 'param2', icon: 'crosshairs' }),
         React.createElement(TypeTextRow, { name: 'param3', icon: 'crosshairs' }),
         React.createElement(TypeTextRow, { name: 'param4', icon: 'crosshairs' }),
-        React.createElement(TypeTextRow, { name: 'resultProp', label: 'output', icon: 'arrow-up' }),
+        React.createElement(ResultRow, null),
         React.createElement(NameRow, null),
         React.createElement('div', { className: 'form-tips', id: 'node-div-description' })
       );
@@ -162,7 +163,8 @@ module.exports = function (PN) {
             null,
             'msg.func'
           ),
-          ' to override this node\'s configuration.'
+          ' ',
+          'to override this node\'s configuration.'
         )
       );
     },

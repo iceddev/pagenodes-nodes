@@ -10,10 +10,10 @@ module.exports = function (PN) {
       operator: { value: "+", required: true },
       operand: { value: "", required: false },
       operandType: { value: "num", required: false },
-      payloadProp: { value: "payload", required: false },
-      resultProp: { value: "payload", required: false },
-      payloadPropType: { value: "msg", required: false },
-      resultPropType: { value: "msg", required: false }
+      payload: { value: "payload", required: false },
+      result: { value: "payload", required: false },
+      payloadType: { value: "msg", required: false },
+      resultType: { value: "msg", required: false }
     },
     inputs: 1, // set the number of inputs - only 0 or 1
     outputs: 1, // set the number of outputs - 0 to n
@@ -22,16 +22,16 @@ module.exports = function (PN) {
       return this.name || this.operator + ' ' + (this.operand || '');
     },
     oneditprepare: function oneditprepare() {
-      PN.util.setupTypedText({ name: 'payloadProp', node: this, types: ['msg', 'flow', 'num', 'str'] });
-      PN.util.setupTypedText({ name: 'resultProp', node: this, types: ['msg', 'flow'] });
+      PN.util.setupTypedText({ name: 'payload', node: this, types: ['msg', 'flow', 'num', 'str'] });
+      PN.util.setupTypedText({ name: 'result', node: this, types: ['msg', 'flow'] });
       PN.util.setupTypedText({ name: 'operand', node: this, types: ['num', 'msg', 'flow', 'str'] });
     },
     render: function render() {
       var _PN$components = PN.components,
           NameRow = _PN$components.NameRow,
-          TextRow = _PN$components.TextRow,
           TypeTextRow = _PN$components.TypeTextRow,
-          SelectRow = _PN$components.SelectRow;
+          SelectRow = _PN$components.SelectRow,
+          ResultRow = _PN$components.ResultRow;
 
       return React.createElement(
         'div',
@@ -246,9 +246,9 @@ module.exports = function (PN) {
             )
           )
         ),
-        React.createElement(TypeTextRow, { name: 'payloadProp', label: 'x', icon: 'cogs' }),
+        React.createElement(TypeTextRow, { name: 'payload', label: 'x', icon: 'cogs' }),
         React.createElement(TypeTextRow, { name: 'operand', label: 'y', icon: 'cogs', placeholder: 'Enter a number, \'pi\', or \'e\'' }),
-        React.createElement(TypeTextRow, { name: 'resultProp', label: 'output', icon: 'arrow-up' }),
+        React.createElement(ResultRow, null),
         React.createElement(NameRow, null),
         React.createElement(
           'div',

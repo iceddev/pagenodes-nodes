@@ -38,7 +38,7 @@ module.exports = function(PN) {
         } else if (!this.payloadType) {
           msg.payload = this.payload;
         } else {
-          msg.payload = PN.util.evaluateNodeProperty(this.payload,this.payloadType,this,msg);
+          msg.payload = this.getInputValue('payload', msg);
         }
         this.send(msg);
         msg = null;

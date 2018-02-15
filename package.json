@@ -33,15 +33,16 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0"
   },
-  "peerDependencies": {
-    "funsocietyirc-client": "^0.1.0",
+  "homepage": "https://github.com/iceddev/pagenodes-nodes#readme",
+  "dependencies": {
+    "funsocietyirc-client": "^0.1.6",
     "is-utf8": "^0.2.1",
+    "lodash": "^4.17.5",
     "mqtt": "^2.15.1",
     "mustache": "^2.3.0",
     "rest": "^2.0.0",
     "sentiment": "^4.2.0",
     "socket.io-client": "^2.0.4",
     "xml2js": "^0.4.19"
-  },
-  "homepage": "https://github.com/iceddev/pagenodes-nodes#readme"
+  }
 }

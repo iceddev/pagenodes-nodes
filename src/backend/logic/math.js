@@ -3,9 +3,6 @@ const _ = require('lodash');
 module.exports = function(PN) {
 
 
-  const DEFAULT_RESULT = 'payload';
-  const DEFAULT_INPUT = 'payload';
-
   function getNumber(input, radix){
     input = '' + input;
     if(input.indexOf('.') > -1){
@@ -29,16 +26,12 @@ module.exports = function(PN) {
       node.operand = n.operand;
       node.operandType = n.operandType || 'num';
       node.operator = n.operator;
-      node.resultProp = n.resultProp || DEFAULT_RESULT;
-      node.payloadProp = n.payloadProp || DEFAULT_INPUT;
-      node.resultPropType = n.resultPropType || 'msg';
-      node.payloadPropType = n.payloadPropType || 'msg';
 
       this.on("input", function(msg) {
 
         // Use any user set outside-of-node prefernces
         var radix = 10;
-        var operand = PN.util.evaluateNodeProperty(node.operand, node.operandType, node, msg); //node.operand;
+        var operand = node.getInputValue('operand', msg);
 
         if(msg.hasOwnProperty('operand')){
           operand = msg.operand;
@@ -47,7 +40,7 @@ module.exports = function(PN) {
           radix = msg.radix;
         }
 
-        var rawInput = PN.util.evaluateNodeProperty(node.payloadProp, node.payloadPropType, node, msg); // _.get(msg, payloadProp);
+        var rawInput = node.getPayloadValue(msg);
         var inputVal = getNumber(rawInput, radix);
         var operandVal = getNumber(operand, radix);
 

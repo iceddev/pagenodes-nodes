@@ -8,18 +8,20 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-module.exports = function (PN) {
-    var ChangeNode = function (_PN$Node) {
-        _inherits(ChangeNode, _PN$Node);
+module.exports = function (RED) {
+    var ChangeNode = function (_RED$Node) {
+        _inherits(ChangeNode, _RED$Node);
 
         function ChangeNode(n) {
             _classCallCheck(this, ChangeNode);
 
             var _this = _possibleConstructorReturn(this, (ChangeNode.__proto__ || Object.getPrototypeOf(ChangeNode)).call(this, n));
 
+            var node = _this;
             _this.rules = n.rules;
+            var rule;
             if (!_this.rules) {
-                var rule = {
+                rule = {
                     t: n.action == "replace" ? "set" : n.action,
                     p: n.property || ""
                 };
@@ -36,7 +38,7 @@ module.exports = function (PN) {
 
             var valid = true;
             for (var i = 0; i < _this.rules.length; i++) {
-                var rule = _this.rules[i];
+                rule = _this.rules[i];
                 // Migrate to type-aware rules
                 if (!rule.pt) {
                     rule.pt = "msg";
@@ -66,20 +68,28 @@ module.exports = function (PN) {
                         rule.fromRE = new RegExp(rule.fromRE, "g");
                     } catch (e) {
                         valid = false;
-                        _this.error(PN._("change.errors.invalid-from", { error: e.message }));
+                        _this.error(RED._("change.errors.invalid-from", { error: e.message }));
                     }
                 }
                 if (rule.tot === 'num') {
                     rule.to = Number(rule.to);
-                } else if (rule.tot === 'json') {
+                } else if (rule.tot === 'json' || rule.tot === 'bin') {
                     try {
-                        rule.to = JSON.parse(rule.to);
+                        // check this is parsable JSON
+                        JSON.parse(rule.to);
                     } catch (e2) {
                         valid = false;
-                        _this.error(PN._("change.errors.invalid-json"));
+                        _this.error(RED._("change.errors.invalid-json"));
                     }
                 } else if (rule.tot === 'bool') {
                     rule.to = /^true$/i.test(rule.to);
+                } else if (rule.tot === 'jsonata') {
+                    try {
+                        rule.to = RED.util.prepareJSONataExpression(rule.to, _this);
+                    } catch (e) {
+                        valid = false;
+                        _this.error(RED._("change.errors.invalid-expr", { error: e.message }));
+                    }
                 }
             }
 
@@ -87,26 +97,38 @@ module.exports = function (PN) {
                 try {
                     var property = rule.p;
                     var value = rule.to;
+                    if (rule.tot === 'json') {
+                        value = JSON.parse(rule.to);
+                    } else if (rule.tot === 'bin') {
+                        value = Buffer.from(JSON.parse(rule.to));
+                    }
                     var current;
                     var fromValue;
                     var fromType;
                     var fromRE;
                     if (rule.tot === "msg") {
-                        value = PN.util.getMessageProperty(msg, rule.to);
+                        value = RED.util.getMessageProperty(msg, rule.to);
                     } else if (rule.tot === 'flow') {
                         value = node.context().flow.get(rule.to);
                     } else if (rule.tot === 'global') {
                         value = node.context().global.get(rule.to);
                     } else if (rule.tot === 'date') {
                         value = Date.now();
+                    } else if (rule.tot === 'jsonata') {
+                        try {
+                            value = RED.util.evaluateJSONataExpression(rule.to, msg);
+                        } catch (err) {
+                            node.error(RED._("change.errors.invalid-expr", { error: err.message }));
+                            return;
+                        }
                     }
                     if (rule.t === 'change') {
                         if (rule.fromt === 'msg' || rule.fromt === 'flow' || rule.fromt === 'global') {
                             if (rule.fromt === "msg") {
-                                fromValue = PN.util.getMessageProperty(msg, rule.from);
-                            } else if (rule.tot === 'flow') {
+                                fromValue = RED.util.getMessageProperty(msg, rule.from);
+                            } else if (rule.fromt === 'flow') {
                                 fromValue = node.context().flow.get(rule.from);
-                            } else if (rule.tot === 'global') {
+                            } else if (rule.fromt === 'global') {
                                 fromValue = node.context().global.get(rule.from);
                             }
                             if (typeof fromValue === 'number' || fromValue instanceof Number) {
@@ -123,11 +145,11 @@ module.exports = function (PN) {
                                     fromRE = new RegExp(fromRE, "g");
                                 } catch (e) {
                                     valid = false;
-                                    node.error(PN._("change.errors.invalid-from", { error: e.message }));
+                                    node.error(RED._("change.errors.invalid-from", { error: e.message }));
                                     return;
                                 }
                             } else {
-                                node.error(PN._("change.errors.invalid-from", { error: "unsupported type: " + (typeof fromValue === "undefined" ? "undefined" : _typeof(fromValue)) }));
+                                node.error(RED._("change.errors.invalid-from", { error: "unsupported type: " + (typeof fromValue === "undefined" ? "undefined" : _typeof(fromValue)) }));
                                 return;
                             }
                         } else {
@@ -138,27 +160,27 @@ module.exports = function (PN) {
                     }
                     if (rule.pt === 'msg') {
                         if (rule.t === 'delete') {
-                            PN.util.setMessageProperty(msg, property, undefined);
+                            RED.util.setMessageProperty(msg, property, undefined);
                         } else if (rule.t === 'set') {
-                            PN.util.setMessageProperty(msg, property, value);
+                            RED.util.setMessageProperty(msg, property, value);
                         } else if (rule.t === 'change') {
-                            current = PN.util.getMessageProperty(msg, property);
+                            current = RED.util.getMessageProperty(msg, property);
                             if (typeof current === 'string') {
-                                if ((fromType === 'num' || fromType === 'bool') && current === fromValue) {
+                                if ((fromType === 'num' || fromType === 'bool' || fromType === 'str') && current === fromValue) {
                                     // str representation of exact from number/boolean
                                     // only replace if they match exactly
-                                    PN.util.setMessageProperty(msg, property, value);
+                                    RED.util.setMessageProperty(msg, property, value);
                                 } else {
                                     current = current.replace(fromRE, value);
-                                    PN.util.setMessageProperty(msg, property, current);
+                                    RED.util.setMessageProperty(msg, property, current);
                                 }
                             } else if ((typeof current === 'number' || current instanceof Number) && fromType === 'num') {
                                 if (current == Number(fromValue)) {
-                                    PN.util.setMessageProperty(msg, property, value);
+                                    RED.util.setMessageProperty(msg, property, value);
                                 }
                             } else if (typeof current === 'boolean' && fromType === 'bool') {
                                 if (current.toString() === fromValue) {
-                                    PN.util.setMessageProperty(msg, property, value);
+                                    RED.util.setMessageProperty(msg, property, value);
                                 }
                             }
                         }
@@ -175,9 +197,9 @@ module.exports = function (PN) {
                             } else if (rule.t === 'set') {
                                 target.set(property, value);
                             } else if (rule.t === 'change') {
-                                current = target.get(msg, property);
+                                current = target.get(property);
                                 if (typeof current === 'string') {
-                                    if ((fromType === 'num' || fromType === 'bool') && current === fromValue) {
+                                    if ((fromType === 'num' || fromType === 'bool' || fromType === 'str') && current === fromValue) {
                                         // str representation of exact from number/boolean
                                         // only replace if they match exactly
                                         target.set(property, value);
@@ -197,20 +219,21 @@ module.exports = function (PN) {
                             }
                         }
                     }
-                } catch (err) {/*console.log(err.stack)*/}
+                } catch (err) {
+                    console.log(err);
+                }
                 return msg;
             }
             if (valid) {
-                var node = _this;
                 _this.on('input', function (msg) {
                     for (var i = 0; i < this.rules.length; i++) {
                         if (this.rules[i].t === "move") {
                             var r = this.rules[i];
-                            if (r.to.indexOf(r.pt) !== -1) {
+                            if (r.tot !== r.pt || r.p.indexOf(r.to) !== -1) {
                                 msg = applyRule(msg, { t: "set", p: r.to, pt: r.tot, to: r.p, tot: r.pt });
                                 applyRule(msg, { t: "delete", p: r.p, pt: r.pt });
                             } else {
-                                // 2 step move if we are moving to a child
+                                // 2 step move if we are moving from a child
                                 msg = applyRule(msg, { t: "set", p: "_temp_move", pt: r.tot, to: r.p, tot: r.pt });
                                 applyRule(msg, { t: "delete", p: r.p, pt: r.pt });
                                 msg = applyRule(msg, { t: "set", p: r.to, pt: r.tot, to: "_temp_move", tot: r.pt });
@@ -226,11 +249,12 @@ module.exports = function (PN) {
                     node.send(msg);
                 });
             }
+
             return _this;
         }
 
         return ChangeNode;
-    }(PN.Node);
+    }(RED.Node);
 
-    PN.nodes.registerType("change", ChangeNode);
+    RED.nodes.registerType("change", ChangeNode);
 };
