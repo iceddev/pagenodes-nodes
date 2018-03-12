@@ -48,6 +48,7 @@ module.exports = function(PN){
       return (
         <div>
           <p>Attaches a base64 (dataURL) picture from your webcam to <code>msg.image</code>.</p>
+          <p>If Animated Gif is selected, you can specify a <code>msg.options</code> object to configure the gif output. More configuration details here: <a href="https://github.com/yahoo/gifshot#options" target="_blank">here</a></p>
         </div>
       )
     },

@@ -70,6 +70,22 @@ module.exports = function (PN) {
             'msg.image'
           ),
           '.'
+        ),
+        React.createElement(
+          'p',
+          null,
+          'If Animated Gif is selected, you can specify a ',
+          React.createElement(
+            'code',
+            null,
+            'msg.options'
+          ),
+          ' object to configure the gif output. More configuration details here: ',
+          React.createElement(
+            'a',
+            { href: 'https://github.com/yahoo/gifshot#options', target: '_blank' },
+            'here'
+          )
         )
       );
     },

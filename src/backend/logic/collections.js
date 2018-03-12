@@ -36,7 +36,7 @@ module.exports = function(PN) {
 
         var lodashFunc = _[func];
         if (lodashFunc) {
-          var msgInput = node.getInputValue('payloadProp', msg);
+          var msgInput = node.getPayloadValue(msg);
           var numberOfParameters = parametersExpected(collectionFunctions, func);
 
           // Use any user set outside-of-node prefernces

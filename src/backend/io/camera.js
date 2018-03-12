@@ -1,6 +1,5 @@
 const gifshot = require('gifshot');
 
-
 // The width and height of the captured photo. We will set the
 // width to the value defined here, but the height will be
 // calculated based on the aspect ratio of the input stream.
@@ -86,19 +85,7 @@ function takepicture(cb) {
 }
 
 function takeGif(msg, cb){
-  var options = {};
-  if(msg.gifWidth > 0){
-    options.gifWidth = msg.gifWidth
-  }
-  if(msg.gifHeight > 0){
-    options.gifHeight = msg.gifHeight;
-  }
-  if(msg.sampleInterval > 0){
-    options.sampleInterval = msg.sampleInterval;
-  }
-  if(msg.gifHeight > 0){
-    options.gifWidth = msg.gifHeight;
-  }
+  const options = typeof msg.options === 'object' ? msg.options : {};
   gifshot.createGIF(options, function(obj) {
     // callback object properties
     // --------------------------
