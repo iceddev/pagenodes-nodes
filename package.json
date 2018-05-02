@@ -37,7 +37,7 @@
   "dependencies": {
     "funsocietyirc-client": "^0.1.6",
     "is-utf8": "^0.2.1",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.10",
     "mqtt": "^2.15.1",
     "mustache": "^2.3.0",
     "rest": "^2.0.0",

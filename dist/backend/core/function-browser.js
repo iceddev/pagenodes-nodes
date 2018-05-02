@@ -61,6 +61,12 @@ module.exports = function (PN) {
           } else if (type === 'globalGet' && data.rpcId) {
             var _value = globalContext[data.key];
             node.worker.postMessage({ rpcId: data.rpcId, type: 'rpc', value: _value });
+          } else if (type === 'flowSet' && data.rpcId) {
+            PN.context.flow.set(data.key, data.value);
+            node.worker.postMessage({ rpcId: data.rpcId, type: 'rpc' });
+          } else if (type === 'flowGet' && data.rpcId) {
+            var _value2 = PN.context.flow.get(data.key);
+            node.worker.postMessage({ rpcId: data.rpcId, type: 'rpc', value: _value2 });
           }
         } catch (exp) {
           node.error(exp);

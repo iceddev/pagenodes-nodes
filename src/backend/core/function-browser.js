@@ -59,6 +59,14 @@ module.exports = function(PN) {
             const value = globalContext[data.key];
             node.worker.postMessage({rpcId: data.rpcId, type: 'rpc', value: value});
           }
+          else if (type === 'flowSet' && data.rpcId){
+            PN.context.flow.set(data.key, data.value);
+            node.worker.postMessage({rpcId: data.rpcId, type: 'rpc'});
+          }
+          else if (type === 'flowGet' && data.rpcId){
+            const value = PN.context.flow.get(data.key);
+            node.worker.postMessage({rpcId: data.rpcId, type: 'rpc', value: value});
+          }
         }catch(exp){
           node.error(exp);
         }

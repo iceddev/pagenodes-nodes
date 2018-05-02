@@ -25,7 +25,7 @@ function createNode(PN){
 
     node.sp.on('data', function(data){
       node.worker.postMessage({type: 'serial', data});
-      console.log('posted data from physical sp to worker', data);
+      // console.log('posted data from physical sp to worker', data);
     });
 
     node.sp.on('error', function(err){
