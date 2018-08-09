@@ -26,10 +26,10 @@ module.exports = function(PN) {
                       options.async = true;
                       options.attrkey = node.attrkey || options.attrkey || '$';
                       options.charkey = node.charkey || options.charkey || '_';
-                      parseString(msg[node.propName], options, function (err, result) {
+                      parseString(value, options, function (err, result) {
                           if (err) { node.error(err, msg); }
                           else {
-                              node.setResult(msg, resutl);
+                              node.setResult(msg, result);
                               node.send(msg);
                           }
                       });

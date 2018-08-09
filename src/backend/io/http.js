@@ -86,11 +86,11 @@ module.exports = function(PN) {
           }
 
           restCall(opts).then(function(res) {
-            console.log('http response', res);
             node.status({});
             node.send(_.assign(msg, {payload: res.entity, status: res.status, headers: res.headers}));
           })
           .catch(function(err) {
+            console.log('error making rest call', err);
             node.status({fill:"red",shape:"ring",text:'error'});
             node.send(_.assign(msg, {payload: null, error: err}));
           });

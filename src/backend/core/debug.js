@@ -1,8 +1,9 @@
+const util = require("util");
+const events = require("events");
+const { get } = require('lodash');
 
 module.exports = function(PN) {
-  "use strict";
-  var util = require("util");
-  var events = require("events");
+
   var debuglength = PN.settings.debugMaxLength||1000;
   var useColors = false;
 
@@ -10,7 +11,7 @@ module.exports = function(PN) {
     constructor(n) {
       super(n);
       this.complete = (n.complete||"payload").toString();
-
+      
       if (this.complete === "false") {
         this.complete = "payload";
       }
@@ -38,15 +39,7 @@ module.exports = function(PN) {
           var property = "payload";
           var output = msg[property];
           if (this.complete !== "false" && typeof this.complete !== "undefined") {
-            property = this.complete;
-            var propertyParts = property.split(".");
-            try {
-              output = propertyParts.reduce(function (obj, i) {
-                return obj[i];
-              }, msg);
-            } catch (err) {
-              output = undefined;
-            }
+            output = get(msg, this.complete);
           }
           if (this.console === "true") {
             if (typeof output === "string") {

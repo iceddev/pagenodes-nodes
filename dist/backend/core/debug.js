@@ -8,11 +8,14 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-module.exports = function (PN) {
-  "use strict";
+var util = require("util");
+var events = require("events");
 
-  var util = require("util");
-  var events = require("events");
+var _require = require('lodash'),
+    get = _require.get;
+
+module.exports = function (PN) {
+
   var debuglength = PN.settings.debugMaxLength || 1000;
   var useColors = false;
 
@@ -52,15 +55,7 @@ module.exports = function (PN) {
           var property = "payload";
           var output = msg[property];
           if (this.complete !== "false" && typeof this.complete !== "undefined") {
-            property = this.complete;
-            var propertyParts = property.split(".");
-            try {
-              output = propertyParts.reduce(function (obj, i) {
-                return obj[i];
-              }, msg);
-            } catch (err) {
-              output = undefined;
-            }
+            output = get(msg, this.complete);
           }
           if (this.console === "true") {
             if (typeof output === "string") {
