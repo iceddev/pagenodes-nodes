@@ -1,4 +1,4 @@
-const _ = require('lodash');
+
 
 const WW_SCRIPT = './shape-worker.bundle.js';
 

@@ -1,8 +1,7 @@
-const _ = require('lodash');
 
 module.exports = function(PN) {
-
-
+  const _ = PN.util;
+  
   function getNumber(input, radix){
     input = '' + input;
     if(input.indexOf('.') > -1){

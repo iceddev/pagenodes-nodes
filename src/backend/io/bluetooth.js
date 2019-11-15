@@ -1,4 +1,3 @@
-var _ = require('lodash');
 var ble = require('./lib/blePeripheral');
 
 window.Buffer = Buffer;
@@ -26,6 +25,8 @@ function getMyCharacteristic(node){
 
 
 function init(PN) {
+
+  const _ = PN.util;
 
   ble.init(PN);
 

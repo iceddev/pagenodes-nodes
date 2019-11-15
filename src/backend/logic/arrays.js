@@ -1,9 +1,8 @@
 var arrayFunctions = require('../../shared/nodes/arrays').arrayFunctions;
-var util = require("util");
 
 module.exports = function(PN) {
 
-  const _ = require("lodash");
+  const _ = PN.util;
 
   function parametersExpected(inputMap, funct) {
     var number = inputMap[funct].params.length + 1;
@@ -66,7 +65,7 @@ module.exports = function(PN) {
             param4 = node.getInputValue('param4', msg);
           }
 
-          console.log('msgInput', msgInput, 'param2', param2, 'param3', param3);
+          // console.log('msgInput', msgInput, 'param2', param2, 'param3', param3);
           if (numberOfParameters === 1) {
             node.setResult(msg, lodashFunc(msgInput));
           } else if (numberOfParameters === 2) {

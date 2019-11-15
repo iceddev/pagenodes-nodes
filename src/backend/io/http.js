@@ -1,8 +1,7 @@
+
 module.exports = function(PN) {
-  const urllib = require("url");
   const mustache = require("mustache");
-  const querystring = require("querystring");
-  const _ = require('lodash');
+  const _ = PN.util;
 
   const rest = require("rest");
   const errorCodeInterceptor = require('rest/interceptor/errorCode');
@@ -21,7 +20,7 @@ module.exports = function(PN) {
 
 
       this.on("input",function(msg) {
-        console.log('sending http request', msg);
+        // console.log('sending http request', msg);
         node.status({fill:"blue",shape:"dot",text:"httpin.status.requesting"});
         var url = msg.url || nodeUrl;
         if (isTemplatedUrl) {
@@ -38,7 +37,7 @@ module.exports = function(PN) {
 
         var method = msg.method || nodeMethod.toUpperCase() || "GET";
 
-        var opts =  {method: method}; //urllib.parse(url);
+        var opts =  {method}; //urllib.parse(url);
         opts.headers = {};
         if (msg.headers) {
           for (var v in msg.headers) {
@@ -61,7 +60,7 @@ module.exports = function(PN) {
         opts.params = msg.params;
         opts.path = url;
 
-        console.log('SERVER httprequest', opts, msg);
+        // console.log('SERVER httprequest', opts, msg);
 
 
         if(process.env.BROWSER && PN.plugin.isActive() && (_.startsWith(opts.path, 'http://') || msg.usePlugin)){

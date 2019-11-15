@@ -1,8 +1,9 @@
 const {stringFunctions, addCustomFunctions} = require('../../shared/nodes/strings');
-const _ = require('lodash');
-addCustomFunctions(_);
 
 module.exports = function(PN) {
+
+  const _ = PN.util;
+  addCustomFunctions(_);
 
   class StringsNode extends PN.Node {
     constructor(n) {
@@ -50,7 +51,7 @@ module.exports = function(PN) {
         }
         var lodashFunc = _[func];
         if(lodashFunc){
-          console.log('msgInput', msgInput, 'param2', param2, 'param3', param3);
+          // console.log('msgInput', msgInput, 'param2', param2, 'param3', param3);
           node.setResult(msg, lodashFunc(msgInput, param2, param3));
           node.send(msg);
         }

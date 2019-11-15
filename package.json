@@ -35,14 +35,14 @@
   },
   "homepage": "https://github.com/iceddev/pagenodes-nodes#readme",
   "dependencies": {
-    "funsocietyirc-client": "^0.1.6",
+    "funsocietyirc-client": "^0.1.20",
     "is-utf8": "^0.2.1",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.15",
     "mqtt": "^2.15.1",
     "mustache": "^2.3.0",
     "rest": "^2.0.0",
     "sentiment": "^4.2.0",
-    "socket.io-client": "^2.0.4",
-    "xml2js": "^0.4.19"
+    "socket.io-client": "^2.3.0",
+    "xml2js": "^0.4.22"
   }
 }

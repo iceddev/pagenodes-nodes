@@ -1,11 +1,11 @@
 const UsbSerial = require('webusb-serial').SerialPort;
 const SplidiSerial = require('splidi-serial').SerialPort;
-const _ = require('lodash');
 function noop() {}
 
 global.Buffer = Buffer;
 
 function init(PN) {
+  const _ = PN.util;
 
   var PluginSerialPort = require('./lib/pluginPort')(PN).SerialPort;
 

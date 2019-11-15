@@ -1,8 +1,8 @@
 const util = require("util");
 const events = require("events");
-const { get } = require('lodash');
 
 module.exports = function(PN) {
+  const { get } = PN.util;
 
   var debuglength = PN.settings.debugMaxLength||1000;
   var useColors = false;

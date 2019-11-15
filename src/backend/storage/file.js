@@ -1,6 +1,7 @@
-const _ = require('lodash');
+
 
 module.exports = function(PN) {
+  const _ = PN.util;
   class FileNode extends PN.Node {}
   PN.nodes.registerType("file",FileNode);
 

@@ -3,7 +3,7 @@ const STORAGE_PREFIX = 'LDB_';
 module.exports = function(PN) {
 
   const localforage = require('localforage');
-  const _ = require('lodash');
+  const _ = PN.util;
 
   class LocalWriteNode extends PN.Node {
     constructor(n) {

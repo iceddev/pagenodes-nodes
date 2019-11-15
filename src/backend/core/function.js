@@ -1,8 +1,8 @@
-//var babel = require('babel');
-const _ = require('lodash');
+
 const globalContext = require('../globalContext');
 
 module.exports = function(PN) {
+  const _ = PN.util;
 
   class FunctionNode extends PN.Node {
     constructor(n) {

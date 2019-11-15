@@ -1,6 +1,5 @@
 const noble = require('noble/with-bindings')(require('noble/lib/webbluetooth/bindings'));
 const EventEmitter = require("events").EventEmitter;
-const { padStart } = require('lodash');
 
 
 noble.on('error', function(err){
@@ -21,21 +20,26 @@ const api = {
   ready: false
 };
 
-function compareUUIDs(a, b){
-  if(typeof a === 'number') {
-    a = padStart(Number(a).toString(16), 4, '0');
-  }
-  if(typeof b === 'number') {
-    b = padStart(Number(b).toString(16), 4, '0');
-  }
-  a = a || '';
-  b = b || '';
-  a = a.toLowerCase().replace(/\-/g, '');
-  b = b.toLowerCase().replace(/\-/g, '');
-  return  b.indexOf(a) >= 0;
-}
+
 
 function init(PN) {
+  const { padStart } = PN.util;
+
+  function compareUUIDs(a, b){
+    if(typeof a === 'number') {
+      a = padStart(Number(a).toString(16), 4, '0');
+    }
+    if(typeof b === 'number') {
+      b = padStart(Number(b).toString(16), 4, '0');
+    }
+    a = a || '';
+    b = b || '';
+    a = a.toLowerCase().replace(/\-/g, '');
+    b = b.toLowerCase().replace(/\-/g, '');
+    return  b.indexOf(a) >= 0;
+  }
+
+
   PN.events.on('rpc_prepublish', function(config){
     console.log('on prepublish', config);
     const nodeList = config.params[0] || [];

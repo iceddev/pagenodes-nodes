@@ -1,6 +1,4 @@
-'use strict';
 
-const _ = require('lodash');
 const WW_SCRIPT = './j5-worker.bundle.js';
 const globalContext = require('../../globalContext');
 const ble = require('./blePeripheral');
@@ -13,6 +11,8 @@ function noop() {}
 
 
 function createNode(PN){
+
+  const _ = PN.util;
 
   var PluginSerialPort = require('./pluginPort')(PN).SerialPort;
 

@@ -1,10 +1,9 @@
 const serialport = require('serialport');
-const isUtf8 = require('is-utf8');
-const _ = require('lodash');
 
 function noop() {}
 
 function init(PN) {
+  const _ = PN.util;
 
   class SerialPortNode extends PN.Node {
     constructor(n) {

@@ -1,5 +1,4 @@
-//var babel = require('babel');
-const _ = require('lodash');
+
 const globalContext = require('../globalContext');
 
 const WW_SCRIPT = './function-worker.bundle.js';

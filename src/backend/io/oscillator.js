@@ -1,6 +1,6 @@
 
 module.exports = function(PN) {
-  const _ = require('lodash');
+  const _ = PN.util;
 
   global.AudioContext = global.AudioContext || global.webkitAudioContext;
 

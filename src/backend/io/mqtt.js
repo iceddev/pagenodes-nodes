@@ -1,8 +1,9 @@
 const mqtt = require('mqtt');
 const isUtf8 = require('is-utf8');
-const _ = require('lodash');
 
 function init(PN) {
+
+  const _ = PN.util;
 
   class MQTTBrokerNode extends PN.Node {
     constructor(n) {

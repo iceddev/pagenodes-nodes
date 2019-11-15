@@ -1,6 +1,8 @@
-const _ = require('lodash');
+
 
 function init(PN) {
+
+  const _ = PN.util;
 
   class MidiInNode extends PN.Node {
     constructor(n) {

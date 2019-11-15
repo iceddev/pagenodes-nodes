@@ -1,4 +1,3 @@
-const _ = require('lodash');
 
 const globalContext = require('../../globalContext');
 var serialport = require('serialport');

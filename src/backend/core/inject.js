@@ -1,5 +1,4 @@
 module.exports = function(PN) {
-  "use strict";
 
   class InjectNode extends PN.Node {
 
